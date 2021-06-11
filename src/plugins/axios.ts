@@ -16,13 +16,13 @@ axios.interceptors.response.use(
     resp => resp.data,
     error => {
         // 点击需要登录的操作后跳转到登录页
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
             router.push('/login');
             setToken(undefined);
             localStorage.removeItem('token');
         }
         // 未知请求就跳转回首页
-        else if (error.response.status === 404) {
+        else if (error.response?.status === 404) {
             router.push('/home');
         }
 

@@ -1,7 +1,7 @@
 import axios from './plugins/axios';
 
 /** 自己的用户信息 */
-interface SelfUserInfo {
+export interface SelfUserInfo {
     /** 邮箱 */
     email: string
     /** 登录验证令牌 */
@@ -23,7 +23,7 @@ interface LoginInfo {
 }
 
 /** 注册信息 */
-type RegisterInfo = {
+export type RegisterInfo = {
     /** 用户名 */
     username: string
 } & LoginInfo
@@ -41,8 +41,8 @@ export class UserAPI {
         return data.user;
     }
 
-    /** 获取用户信息 */
-    static async getUser() {
+    /** 获取自己的用户信息 */
+    static async getSelfUserInfo() {
         const data: { user: SelfUserInfo } = await axios.get('/user');
         return data.user;
     }
@@ -224,4 +224,16 @@ export class CommentAPI {
     static async delete(slug: Slug, id: CommentId): Promise<void> {
         return axios.delete(`/articles/${slug}/comments/${id}`);
     }
+}
+
+/**
+ * 格式化后端校验报错
+ * 
+ * @param errorMsg 后端表单校验报错信息
+ * @returns 报错信息数组
+ */
+export const formatError = function (errorMsg: { [errorKey: string]: string[] }): string[] | undefined {
+    if (!errorMsg || Object.keys(errorMsg).length <= 0) return undefined;
+    // 遍历对象，把每个键值对渲染成一行
+    return Object.entries(errorMsg).map(line => line.join(' '));
 }

@@ -3,9 +3,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { ArticlesAPI } from '@/api'
 
-export default {
+export default defineComponent({
     name: 'Home',
     setup() {
         const fetchList = async () => {
@@ -15,7 +16,7 @@ export default {
 
         fetchList()
     }
-}
+})
 </script>
 
 <style>
