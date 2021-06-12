@@ -5,8 +5,8 @@
             <div class="operation">
                 <router-link to="/">Home</router-link>
                 <template v-if="userInfo">
-                    <router-link to="/editor">New Article</router-link>
-                    <router-link to="/settings">Setting</router-link>
+                    <router-link to="/editor"><DiffOutlined /> New Article</router-link>
+                    <router-link to="/settings"><SettingOutlined /> Setting</router-link>
                     <router-link :to="`/user/${userInfo.username}`">{{userInfo.username}}</router-link>
                 </template>
                 <template v-else>
@@ -37,6 +37,7 @@ import { defineComponent, provide, onMounted, ref } from "vue";
 import { setToken } from '@/plugins/axios';
 import { UserAPI, SelfUserInfo } from '@/api';
 import { userInfoKey, SetUserInfo, setUserInfoKey } from './contants';
+import { DiffOutlined, SettingOutlined } from '@ant-design/icons-vue';
 
 /** 创建全局用户信息 */
 const useUserInfo = function () {
@@ -67,6 +68,7 @@ const useUserInfo = function () {
 
 export default defineComponent({
     name: "App",
+    components: { DiffOutlined, SettingOutlined },
     setup() {
         const { userInfo, setUserInfo } = useUserInfo();
 

@@ -23,10 +23,24 @@ interface LoginInfo {
 }
 
 /** 注册信息 */
-export type RegisterInfo = {
+export type RegisterInfo = LoginInfo & {
     /** 用户名 */
     username: string
-} & LoginInfo
+}
+
+/** 更新用户信息时需要上传的数据 */
+export type UpdateSelfUserInfo = {
+    /** 用户名 */
+    username: string
+    /** 简介 */
+    bio?: string
+    /** 头像链接 */
+    image?: string
+    /** 邮箱 */
+    email: string
+    /** 密码 */
+    password: string
+}
 
 export class UserAPI {
     /** 登录 */
@@ -48,7 +62,7 @@ export class UserAPI {
     }
 
     /** 更新用户信息 */
-    static async updateUser(user: SelfUserInfo) {
+    static async updateUser(user: UpdateSelfUserInfo) {
         const data: { user: SelfUserInfo } = await axios.put('/user', { user });
         return data.user;
     }
