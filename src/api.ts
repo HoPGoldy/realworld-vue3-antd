@@ -101,10 +101,10 @@ export class ProfileAPI {
 }
 
 /** 文章索引 */
-type Slug = string
+export type Slug = string
 
 /** 文章内容 */
-interface ArticleContent {
+export interface ArticleContent {
     /** 标题 */
     title: string
     /** 简介 */
@@ -151,7 +151,7 @@ interface ArticleList {
     articlesCount: number
 }
 
-export class ArticlesAPI {
+export class ArticleAPI {
     /** 获取关注列表文章 */
     static async getFeedList(params: ArticleParams): Promise<ArticleList> {
         return axios.get('/articles/feed/', { params });
