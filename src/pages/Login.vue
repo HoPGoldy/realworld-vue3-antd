@@ -44,26 +44,38 @@ import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { RegisterInfo, UserAPI, formatError } from '@/api';
 import { FormRules } from '@/common';
 
+/**
+ * 获取页面状态
+ * 因为这个页面有可能是注册或者登录
+ */
 const usePageMode = function () {
     const path = toRef(useRoute(), "path");
     return computed(() => path.value === "/login");
 }
 
-const useLoginForm = function (isLoginPage: ComputedRef<boolean>, setUserInfo?: SetUserInfo) {
+/** 登录表单相关 */
+const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
     const formRules: FormRules = {
         username: [{ required: true, trigger: 'change' }],
         password: [{ required: true, trigger: 'change' }],
         email: [{ required: true, trigger: 'change' }],
     }
     const formRef = ref();
-
+    const errorInfo = ref<string[]>();
     const router = useRouter();
+
     const formData = reactive<RegisterInfo>({ username: '', password: '', email: '', });
+    
+    // 设置全局用户信息
+    const setUserInfo = inject(setUserInfoKey);
+
+    // 回调 - 点击登录 / 注册按钮
     const onSubmit = async () => {
         errorInfo.value = undefined;
         await formRef.value.validate();
         
         try {
+            // 根据当前页面状态决定调用登录接口还是注册接口
             const request = isLoginPage.value ? UserAPI.login : UserAPI.register;
             const selfUserInfo = await request(formData);
             setUserInfo && setUserInfo(selfUserInfo);
@@ -74,8 +86,9 @@ const useLoginForm = function (isLoginPage: ComputedRef<boolean>, setUserInfo?: 
             errorInfo.value = formatError(e.response.data.errors);
         }
     };
+
+    // 从登录页切换到注册页时（自己跳自己），清空表单验证
     onBeforeRouteLeave(() => formRef.value && formRef.value.resetFields());
-    const errorInfo = ref<string[]>();
 
     return { formData, onSubmit, formRules, formRef, errorInfo };
 }
@@ -85,12 +98,9 @@ export default defineComponent({
     setup() {
         const isLoginPage = usePageMode();
 
-        const setUserInfo = inject(setUserInfoKey);
-        if (!setUserInfo) console.error(setUserInfo, '不存在');
-
         return {
             isLoginPage,
-            ...useLoginForm(isLoginPage, setUserInfo)
+            ...useLoginForm(isLoginPage)
         };
     },
 });

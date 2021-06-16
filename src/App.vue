@@ -84,7 +84,7 @@ export default defineComponent({
 <style scoped>
 .header {
     position: fixed;
-    z-index: 1;
+    z-index: 100;
     width: 100%;
 
     display: flex;
@@ -97,5 +97,11 @@ export default defineComponent({
 
 .header .operation a {
     margin-left: 1em;
+}
+</style>
+
+<style>
+body::-webkit-scrollbar {
+    width: 0px;
 }
 </style>

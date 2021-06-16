@@ -48,6 +48,10 @@ import { defineComponent, ref, computed, ComputedRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FormRules } from '@/common';
 
+/**
+ * 页面状态相关
+ * 当 params 不包含 id 时即为新建文章页面，否则是编辑文章
+ */
 const useArticleInfo = function () {
     const route = useRoute();
 
@@ -57,7 +61,8 @@ const useArticleInfo = function () {
     return { editSlug, isCreatePage };
 }
 
-const useLoginForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
+/** 编辑表单相关 */
+const useEditForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
     const formRules: FormRules = {
         title: [{ required: true, trigger: 'change' }],
         body: [{ required: true, trigger: 'change' }],
@@ -67,14 +72,18 @@ const useLoginForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
     const errorInfo = ref<string[]>();
 
     const formData = ref<ArticleContent>({ title: '', description: '', body: '', tagList: [] });
+
+    // 回调 - 点击发布按钮
     const onSubmit = async () => {
         errorInfo.value = undefined;
         await formRef.value.validate();
 
+        // 根据页面状态选择是更新还是新建
         const newArticle = isCreatePage.value ?
             await ArticleAPI.create(formData.value) :
             await ArticleAPI.update(slug, formData.value);
 
+        // 建好了就去对应的文章页面
         router.push(`/article/${newArticle.slug}`);
     };
 
@@ -86,8 +95,9 @@ export default defineComponent({
     setup() {
         const { editSlug, isCreatePage } = useArticleInfo();
 
-        const formOperator = useLoginForm(editSlug, isCreatePage);
+        const formOperator = useEditForm(editSlug, isCreatePage);
 
+        // 是编辑页面的话就需要回显文章内容
         if (!isCreatePage.value) {
             const fetchArticle = async () => {
                 const article = await ArticleAPI.get(editSlug);
@@ -96,6 +106,7 @@ export default defineComponent({
             fetchArticle();
         }
 
+        // 根据页面状态显示页面标题
         const pageTitle = computed(() => {
             return isCreatePage.value ? 'New Article' : `Edit Article ${formOperator.formData.value.title}`
         })

@@ -116,7 +116,7 @@ export interface ArticleContent {
 }
 
 /** 已创建文章详情 */
-type Article = {
+export type Article = {
     /** 索引 */
     slug: Slug
     /** 创建时间字符串 */
@@ -133,16 +133,16 @@ type Article = {
 
 /** 文章列表查询条件 */
 interface ArticleParams {
-    /** 贴有该标签的文章 */
-    tag: string
     /** 每页的文章 */
     limit: number
     /** 从第多少个文章开始获取 */
     offset: number
+    /** 贴有该标签的文章 */
+    tag?: string
     /** 用户名，文章列表的作者 */
-    author: string
+    author?: string
     /** 用户名，获取他最喜欢的文章 */
-    favorited: string
+    favorited?: string
 }
 
 /** 文章列表返回值 */
