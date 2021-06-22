@@ -132,11 +132,14 @@ export type Article = {
 } & ArticleContent
 
 /** 文章列表查询条件 */
-interface ArticleParams {
+type ArticleParams = {
     /** 每页的文章 */
     limit: number
     /** 从第多少个文章开始获取 */
     offset: number
+} & ArticleQuery
+
+export interface ArticleQuery {
     /** 贴有该标签的文章 */
     tag?: string
     /** 用户名，文章列表的作者 */

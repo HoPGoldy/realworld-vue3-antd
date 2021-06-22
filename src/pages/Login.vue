@@ -73,7 +73,7 @@ const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
     const onSubmit = async () => {
         errorInfo.value = undefined;
         await formRef.value.validate();
-        
+
         try {
             // 根据当前页面状态决定调用登录接口还是注册接口
             const request = isLoginPage.value ? UserAPI.login : UserAPI.register;
