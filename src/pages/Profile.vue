@@ -1,13 +1,13 @@
 <template>
-<div>
-    <a-row type="flex" justify="center">
-        <a-col>
-            <a-typography-title>Your Settings</a-typography-title>
-        </a-col>
-    </a-row>
+<a-row type="flex" justify="center">
+    <a-col :md="12" :xs="24" style="margin-top: 1em;">
+        <a-card :bordered="false">
+            <!-- 标题 -->
+            <template #title>
+                <a-typography-title>Your Settings</a-typography-title>
+            </template>
 
-    <a-row type="flex" justify="center">
-        <a-col :lg="6" :md="12" :xs="24" style="margin-top: 1em;">
+            <!-- 提交报错信息 -->
             <div v-if="errorInfo" style="margin-bottom: 2em;" >
                 <a-alert style="margin-bottom: 1em;" v-for="errorContent in errorInfo" :key="errorContent" :message="errorContent" type="error" />
             </div>
@@ -30,16 +30,13 @@
                     <a-input-password v-model:value="formData.password" placeholder="New Password" />
                 </a-form-item>
             </a-form>
-        </a-col>
-    </a-row>
-    <a-row type="flex" justify="center">
-        <a-col :lg="6" :md="12" :xs="24">
+
             <!-- 按钮区 -->
             <a-button type="primary" @click="onSubmit" block>Update Setting</a-button>
-            <a-button style="margin-top: 1em" @click="onLogout" block>Or click here to logout</a-button>
-        </a-col>
-    </a-row>
-</div>
+            <a-button style="margin-top: 1em" type="link" @click="onLogout" block>Or click here to logout</a-button>
+        </a-card>
+    </a-col>
+</a-row>
 </template>
 
 <script lang="ts">

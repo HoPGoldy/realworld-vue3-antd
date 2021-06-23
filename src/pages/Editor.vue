@@ -1,16 +1,18 @@
 <template>
-<div>
-    <a-row type="flex" justify="center">
-        <a-col>
-            <a-typography-title>{{pageTitle}}</a-typography-title>
-        </a-col>
-    </a-row>
+<a-row type="flex" justify="center">
+    <a-col :md="12" :xs="24" style="margin-top: 1em;">
+        <a-card :bordered="false">
+            <!-- 标题 -->
+            <template #title>
+                <a-typography-title>{{pageTitle}}</a-typography-title>
+            </template>
 
-    <a-row type="flex" justify="center">
-        <a-col :lg="6" :md="12" :xs="24" style="margin-top: 1em;">
+            <!-- 提交报错信息 -->
             <div v-if="errorInfo" style="margin-bottom: 2em;" >
                 <a-alert style="margin-bottom: 1em;" v-for="errorContent in errorInfo" :key="errorContent" :message="errorContent" type="error" />
             </div>
+
+            <!-- 编辑表单 -->
             <a-form :model="formData" :label-col="{ span: 5 }" label-align="left" :rules="formRules" ref="formRef">
                 <a-form-item name="title" label="Title">
                     <a-input v-model:value="formData.title" placeholder="Article Title" />
@@ -32,18 +34,16 @@
                     </a-select>
                 </a-form-item>
             </a-form>
-        </a-col>
-    </a-row>
-    <a-row type="flex" justify="center">
-        <a-col :lg="6" :md="12" :xs="24">
+
+            <!-- 操作区域 -->
             <a-button type="primary" @click="onSubmit" block>Publish Article</a-button>
-        </a-col>
-    </a-row>
-</div>
+        </a-card>
+    </a-col>
+</a-row>
 </template>
 
 <script lang="ts">
-import { formatError, ArticleContent, ArticleAPI, Slug } from '@/api';
+import { ArticleContent, ArticleAPI, Slug } from '@/api';
 import { defineComponent, ref, computed, ComputedRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FormRules } from '@/common';

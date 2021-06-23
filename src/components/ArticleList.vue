@@ -14,7 +14,9 @@
             </a-list-item-meta>
 
             <!-- 列表项正文 -->
-            <h1>{{ item.title }}</h1>
+            <h1>
+                <router-link :to="`/article/${item.slug}`">{{ item.title }}</router-link>
+            </h1>
             <span>{{ item.description }}</span>
 
             <!-- 右上角喜欢按钮 -->

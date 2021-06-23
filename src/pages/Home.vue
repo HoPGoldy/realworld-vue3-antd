@@ -5,13 +5,13 @@
             <!-- tab 切换 -->
             <a-menu v-model:selectedKeys="currentTab" mode="horizontal">
                 <a-menu-item key="global">
-                    <MailOutlined />Global Feed
+                    <MailOutlined /> Global Feed
                 </a-menu-item>
                 <a-menu-item v-if="!!userInfo" key="your">
-                    <TeamOutlined />Your Feed
+                    <TeamOutlined /> Your Feed
                 </a-menu-item>
                 <a-menu-item v-if="!!checkedTag" :key="checkedTag">
-                    <TagOutlined />#{{checkedTag}}
+                    <TagOutlined /> #{{checkedTag}}
                 </a-menu-item>
             </a-menu>
 
