@@ -108,7 +108,7 @@ export default defineComponent({
 
         // 根据页面状态显示页面标题
         const pageTitle = computed(() => {
-            return isCreatePage.value ? 'New Article' : `Edit Article ${formOperator.formData.value.title}`
+            return isCreatePage.value ? 'New Article' : formOperator.formData.value.title
         })
 
         return {

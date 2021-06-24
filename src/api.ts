@@ -69,7 +69,7 @@ export class UserAPI {
 }
 
 /** 用户信息 */
-interface UserInfo {
+export interface UserInfo {
     /** 用户名 */
     username: string
     /** 用户简介 */
