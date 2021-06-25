@@ -9,6 +9,7 @@
                 <Author :author="article.author" :date="article.updatedAt" />
             </template>
 
+            <v-md-editor v-model="article.body" height="400px"></v-md-editor>
         </a-card>
     </a-col>
 </a-row>

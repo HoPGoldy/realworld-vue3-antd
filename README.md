@@ -32,3 +32,4 @@ Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
 - [vue3](https://vue3js.cn/docs/zh/guide/introduction.html)
 - [vite](https://cn.vitejs.dev/guide/)
 - [antd-vue3](https://2x.antdv.com/components/button-cn)
+- [md-editor](http://ckang1229.gitee.io/vue-markdown-editor/zh/)
