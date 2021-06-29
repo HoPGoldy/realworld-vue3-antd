@@ -1,8 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './plugins/router';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+import { useAntd } from './plugins/antd';
 
 // markdown 编辑器
 import VMdEditor from '@kangc/v-md-editor';
@@ -13,4 +12,5 @@ import hljs from 'highlight.js';
 
 VMdEditor.use(githubTheme, { Hljs: hljs });
 
-createApp(App).use(router).use(Antd).use(VMdEditor).mount('#app');
+const app = createApp(App);
+useAntd(app).use(router).use(VMdEditor).mount('#app');

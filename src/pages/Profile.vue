@@ -85,13 +85,9 @@ const useProfileForm = function (setUserInfo?: SetUserInfo) {
 export default defineComponent({
     name: 'Profile',
     setup() {
-        const userInfo = inject(userInfoKey);
-        const setUserInfo = inject(setUserInfoKey);
+        const userInfo = inject(userInfoKey, ref(undefined));
+        const setUserInfo = inject(setUserInfoKey, () => {});
         const router = useRouter();
-
-        if (!userInfo || !setUserInfo) {
-            return new Error(`无效 inject ${userInfo} ${setUserInfo}`);
-        }
 
         // 回调 - 点击登出按钮
         const onLogout = () => {
