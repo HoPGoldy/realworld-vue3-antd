@@ -6,7 +6,7 @@
             <!-- 列表项标题 -->
             <a-list-item-meta style="align-items: center;" :description="item.timeLabel">
                 <template #title>
-                    <a :href="item.href">{{ item.title }}</a>
+                    <router-link :to="`/user/${item.author.username}`">{{ item.author.username }}</router-link>
                 </template>
                 <template #avatar>
                     <a-avatar class="a123" :src="item.author.image" />
