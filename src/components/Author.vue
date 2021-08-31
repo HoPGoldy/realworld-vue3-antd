@@ -11,8 +11,8 @@
 
 <script lang="ts" setup>
 import { toRefs, computed } from "vue";
-import { UserInfo } from "@/api";
 import dayjs from 'dayjs';
+import { UserInfo } from "@/types/services";
 
 interface Props {
     /** 头像对应的用户信息 */

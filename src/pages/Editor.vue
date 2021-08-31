@@ -43,10 +43,11 @@
 </template>
 
 <script lang="ts">
-import { ArticleContent, ArticleAPI, Slug } from '@/api';
 import { defineComponent, ref, computed, ComputedRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { FormRules } from '@/common';
+import { FormRules } from '@/types/common';
+import { ArticleContent, Slug } from '@/types/services';
+import { createArticle, fetchArticle, updateArticle } from '@/services/article';
 
 /**
  * 页面状态相关
@@ -80,8 +81,8 @@ const useEditForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
 
         // 根据页面状态选择是更新还是新建
         const newArticle = isCreatePage.value ?
-            await ArticleAPI.create(formData.value) :
-            await ArticleAPI.update(slug, formData.value);
+            await createArticle(formData.value) :
+            await updateArticle(slug, formData.value);
 
         // 建好了就去对应的文章页面
         router.push(`/article/${newArticle.slug}`);
@@ -99,11 +100,11 @@ export default defineComponent({
 
         // 是编辑页面的话就需要回显文章内容
         if (!isCreatePage.value) {
-            const fetchArticle = async () => {
-                const article = await ArticleAPI.get(editSlug);
+            const runfetchArticle = async () => {
+                const article = await fetchArticle(editSlug);
                 formOperator.formData.value = article;
             }
-            fetchArticle();
+            runfetchArticle();
         }
 
         // 根据页面状态显示页面标题

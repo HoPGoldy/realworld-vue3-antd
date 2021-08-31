@@ -1,5 +1,5 @@
 import { InjectionKey, Ref } from 'vue';
-import { SelfUserInfo } from './api';
+import { SelfUserInfo } from './types/services';
 
 /** 设置新的用户信息 可以设置为空 */
 export type SetUserInfo = (newInfo: SelfUserInfo | undefined) => void

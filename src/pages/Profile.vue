@@ -40,11 +40,13 @@
 </template>
 
 <script lang="ts">
-import { formatError, UpdateSelfUserInfo, UserAPI } from '@/api';
 import { SetUserInfo, setUserInfoKey, userInfoKey } from '@/contants';
 import { defineComponent, ref, inject, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { FormRules } from '@/common';
+import { FormRules } from '@/types/common';
+import { UpdateSelfUserInfo } from '@/types/services';
+import { updateSelfUserInfo } from '@/services/user';
+import { formatError } from '@/utils';
 
 /** 表单相关组合式 */
 const useProfileForm = function (setUserInfo?: SetUserInfo) {
@@ -67,7 +69,7 @@ const useProfileForm = function (setUserInfo?: SetUserInfo) {
         await formRef.value.validate();
 
         try {
-            const selfUserInfo = await UserAPI.updateUser(formData.value);
+            const selfUserInfo = await updateSelfUserInfo(formData.value);
             // 更新用户信息后把新的内容更新到全局
             setUserInfo && setUserInfo(selfUserInfo);
             router.replace(`/user/${selfUserInfo.username}`);

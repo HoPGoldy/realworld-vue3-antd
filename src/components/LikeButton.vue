@@ -7,7 +7,8 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 import { LikeOutlined } from "@ant-design/icons-vue";
-import { Article, ArticleAPI } from "@/api";
+import { Article } from "@/types/services";
+import { favoriteArticle, unfavoriteArticle } from "@/services/article";
 
 interface Props {
     article: Article
@@ -21,7 +22,7 @@ const { article, size } = toRefs(props);
 
 /** 回调 - 点击喜欢按钮 */
 const onClick = async function () {
-    const request = article.value.favorited ? ArticleAPI.unfavorite : ArticleAPI.favorite;
+    const request = article.value.favorited ? unfavoriteArticle : favoriteArticle;
     const resp = await request(article.value.slug);
     emits('update', resp);
 }

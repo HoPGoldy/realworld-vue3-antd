@@ -40,19 +40,20 @@
             </a-tabs>
 
             <!-- 文章列表 -->
-            <ArticleList v-if="!!userInfo.username" :query="query" @tag-click="onClickTag" />
+            <ArticleList :query="query" @tag-click="onClickTag" />
         </a-card>
     </a-col>
 </a-row>
 </template>
 
 <script lang="ts">
-import { ProfileAPI, UserInfo } from '@/api';
 import { defineComponent, ref, inject, computed, watch, Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HomeOutlined, SettingOutlined, PlusOutlined, BuildOutlined, HeartOutlined } from '@ant-design/icons-vue';
 import { userInfoKey } from '@/contants';
 import ArticleList from '@/components/ArticleList.vue';
+import { UserInfo } from '@/types/services';
+import { fetchUserProfile } from '@/services/profile';
 
 /** 用户信息相关组合式 */
 const useUserInfo = function () {
@@ -65,7 +66,7 @@ const useUserInfo = function () {
     const selfInfo = inject(userInfoKey);
 
     const fetchUserInfo = async function () {
-        userInfo.value = await ProfileAPI.getUser(
+        userInfo.value = await fetchUserProfile(
             typeof username == 'string' ? username : username[0]
         );
     }

@@ -41,8 +41,10 @@
 import { defineComponent, toRef, computed, reactive, inject, ref, ComputedRef } from "vue";
 import { setUserInfoKey } from '@/contants';
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
-import { RegisterInfo, UserAPI, formatError } from '@/api';
-import { FormRules } from '@/common';
+import { FormRules } from '@/types/common';
+import { login, register } from "@/services/user";
+import { formatError } from "@/utils";
+import { RegisterInfo } from "@/types/services";
 
 /**
  * 获取页面状态
@@ -76,7 +78,7 @@ const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
 
         try {
             // 根据当前页面状态决定调用登录接口还是注册接口
-            const request = isLoginPage.value ? UserAPI.login : UserAPI.register;
+            const request = isLoginPage.value ? login : register;
             const selfUserInfo = await request(formData);
             setUserInfo && setUserInfo(selfUserInfo);
             router.replace(`/user/${selfUserInfo.username}`);

@@ -30,13 +30,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, inject, Ref, watch } from 'vue';
-import { ArticleAPI, ArticleQuery } from '@/api';
+import { defineComponent, ref, computed, inject, Ref, watch } from 'vue';
 import ArticleList from '@/components/ArticleList.vue';
 import { MailOutlined, TeamOutlined, TagOutlined } from '@ant-design/icons-vue';
 import TagList from '@/components/TagList.vue';
 import { userInfoKey } from '@/contants';
 import { useRoute, useRouter } from 'vue-router';
+import { ArticleQuery } from '@/types/services';
+import { fetchFeedArticleList, fetchGlobalArticleList, fetchTagList } from '@/services/article';
 
 /** 不是标签的 tab 页面值 */
 const NOT_TAG_TAB = ['global', 'your']
@@ -55,9 +56,9 @@ const useTag = function (currentTab: Ref<string[]>) {
     const loadingTag = ref(true);
 
     // 获取热门 tag
-    const fetchTagList = async () => {
+    const runfetchTagList = async () => {
         loadingTag.value = true;
-        const list = await ArticleAPI.getTagList();
+        const list = await fetchTagList();
         loadingTag.value = false;
         tagList.value = list;
     }
@@ -67,9 +68,9 @@ const useTag = function (currentTab: Ref<string[]>) {
         checkedTag.value = value;
     }
 
-    fetchTagList();
+    runfetchTagList();
 
-    return { tagList, checkedTag, loadingTag, onClickTag, fetchTagList }
+    return { tagList, checkedTag, loadingTag, onClickTag }
 }
 
 export default defineComponent({
@@ -90,7 +91,7 @@ export default defineComponent({
 
         // 根据当前标签页（如果是 Your Feed 的话）来选择对应的请求方法
         const queryRequest = computed(() => {
-            return currentTab.value.includes('your') ? ArticleAPI.getFeedList : ArticleAPI.getGlobalList;
+            return currentTab.value.includes('your') ? fetchFeedArticleList : fetchGlobalArticleList;
         });
 
         // 根据当前是否有用户信息决定是否显示 Your Feed 标签页

@@ -7,7 +7,8 @@
 <script lang="ts" setup>
 import { toRefs, computed } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { ProfileAPI, UserInfo } from "@/api";
+import { UserInfo } from "@/types/services";
+import { followUser, unfollowUser } from "@/services/profile";
 
 interface Props {
     followed: boolean
@@ -24,7 +25,7 @@ const { username, followed, label: defaultLabel } = toRefs(props);
 
 /** 回调 - 点击喜欢按钮 */
 const onClick = async function () {
-    const request = followed.value ? ProfileAPI.unfollowUser : ProfileAPI.followUser;
+    const request = followed.value ? unfollowUser : followUser;
     const resp = await request(username.value);
     emit('update', resp);
 }

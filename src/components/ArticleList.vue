@@ -41,23 +41,24 @@
 
 <script lang="ts" setup>
 import { defineComponent, watchEffect, toRefs, ref, reactive, computed, watch } from "vue";
-import { Article, ArticleAPI, ArticleQuery } from "@/api";
 import dayjs from 'dayjs';
 import LikeButton from './LikeButton.vue';
 import TagList from './TagList.vue';
 import { useRoute, useRouter } from "vue-router";
+import { Article, ArticleQuery, FetchArticleListFunc } from "@/types/services";
+import { fetchGlobalArticleList } from "@/services/article";
 
 interface Props {
     /** 列表搜索项 */
     query: ArticleQuery
     /** 搜索所处的请求 */
-    request: typeof ArticleAPI.getGlobalList
+    request?: FetchArticleListFunc
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    request: ArticleAPI.getGlobalList
+    request: fetchGlobalArticleList
 });
-console.log('🚀 ~ file: ArticleList.vue ~ line 73 ~ props ~ props', props)
+console.log('🚀 ~ file: ArticleList.vue ~ line 73 ~ props ~ props.request', props.request)
 const emit = defineEmits<{ (event: 'tag-click', clickedTag: string): void }>();
 
 const formatArticle = (article: Article) => ({

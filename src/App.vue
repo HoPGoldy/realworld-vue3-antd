@@ -35,9 +35,10 @@
 <script lang="ts">
 import { defineComponent, provide, onMounted, ref } from "vue";
 import { setToken } from '@/plugins/axios';
-import { UserAPI, SelfUserInfo } from '@/api';
 import { userInfoKey, SetUserInfo, setUserInfoKey } from './contants';
 import { DiffOutlined, SettingOutlined } from '@ant-design/icons-vue';
+import { fetchSelfUserInfo } from "./services/user";
+import { SelfUserInfo } from "./types/services";
 
 /** 创建全局用户信息 */
 const useUserInfo = function () {
@@ -59,7 +60,7 @@ const useUserInfo = function () {
         if (!token) return;
 
         setToken(token);
-        const userInfo = await UserAPI.getSelfUserInfo();
+        const userInfo = await fetchSelfUserInfo();
         setUserInfo(userInfo);
     });
 
