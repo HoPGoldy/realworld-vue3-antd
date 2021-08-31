@@ -9,45 +9,28 @@
 </a-space>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, watchEffect, toRefs, ref, reactive, computed, watch } from "vue";
-import { LikeOutlined } from "@ant-design/icons-vue";
-import { Article, ArticleAPI, UserInfo } from "@/api";
+<script lang="ts" setup>
+import { toRefs, computed } from "vue";
+import { UserInfo } from "@/api";
 import dayjs from 'dayjs';
-import LikeButton from './LikeButton.vue';
-import TagList from './TagList.vue';
-import { useRoute, useRouter } from "vue-router";
 
-/** 每页展示的文章数量 */
-const NUMBER_PER_PAGE = 10;
+interface Props {
+    /** 头像对应的用户信息 */
+    author: UserInfo
+    /** 显示在头像下方的日期字符串 */
+    date?: string
+}
 
-export default defineComponent({
-    name: "Author",
-    components: { LikeOutlined, LikeButton, TagList },
-    props: {
-        /** 列表搜索项 */
-        author: {
-            type: Object as PropType<UserInfo>,
-            default: {}
-        },
-        /** 显示的日期字符串 */
-        date: {
-            type: String,
-            default: ''
-        }
-    },
-    setup(props) {
-        const { date } = toRefs(props);
+const props = withDefaults(defineProps<Props>(), {
+    date: ''
+})
 
-        const dateLabel = computed(() => {
-            if (!date.value) return '';
-            return dayjs(date.value).format('YYYY-MM-DD HH:mm:ss');
-        })
-        return {
-            dateLabel
-        };
-    },
-});
+const { date } = toRefs(props);
+
+const dateLabel = computed(() => {
+    if (!date.value) return '';
+    return dayjs(date.value).format('YYYY-MM-DD HH:mm:ss');
+})
 </script>
 
 <style>

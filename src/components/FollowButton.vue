@@ -1,57 +1,38 @@
 <template>
 <a-button :type="followed ? 'primary' : 'default'" :size="size" @click="onClick">
-    <PlusOutlined /> {{showLabel}}
+    <PlusOutlined /> {{label}}
 </a-button>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, watchEffect, toRefs, ref, reactive, computed } from "vue";
+<script lang="ts" setup>
+import { toRefs, computed } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { Article, ArticleAPI, ProfileAPI } from "@/api";
+import { ProfileAPI, UserInfo } from "@/api";
 
-export default defineComponent({
-    name: "FollowButton",
-    components: { PlusOutlined },
-    props: {
-        followed: {
-            type: Boolean,
-            required: true
-        },
-        username: {
-            type: String,
-            required: true
-        },
-        label: {
-            type: String
-        },
-        size: {
-            type: String,
-            default: 'small'
-        }
-    },
-    emits: ['update'],
-    setup(props, { emit }) {
-        const { username, followed, label } = toRefs(props);
+interface Props {
+    followed: boolean
+    username: string
+    label?: string
+    size?: string
+}
 
-        /** 回调 - 点击喜欢按钮 */
-        const onClick = async function () {
-            const request = followed.value ? ProfileAPI.unfollowUser : ProfileAPI.followUser;
-            const resp = await request(username.value);
-            emit('update', resp);
-        }
+const props = withDefaults(defineProps<Props>(), { size: 'small' });
 
-        const showLabel = computed(() => {
-            if (label.value) return label.value;
-            return `${followed.value ? 'Unfollow' : 'Follow'} ${username.value}`
+const emit = defineEmits<{ (event: 'update', data: UserInfo): void }>();
 
-        })
+const { username, followed, label: defaultLabel } = toRefs(props);
 
-        return {
-            onClick,
-            showLabel
-        };
-    },
-});
+/** 回调 - 点击喜欢按钮 */
+const onClick = async function () {
+    const request = followed.value ? ProfileAPI.unfollowUser : ProfileAPI.followUser;
+    const resp = await request(username.value);
+    emit('update', resp);
+}
+
+const label = computed(() => {
+    if (defaultLabel && defaultLabel.value) return defaultLabel.value;
+    return `${followed.value ? 'Unfollow' : 'Follow'} ${username.value}`;
+})
 </script>
 
 <style>

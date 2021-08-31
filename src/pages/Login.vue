@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { defineComponent, toRef, computed, reactive, inject, ref, ComputedRef } from "vue";
-import { SetUserInfo, setUserInfoKey } from '@/contants';
+import { setUserInfoKey } from '@/contants';
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { RegisterInfo, UserAPI, formatError } from '@/api';
 import { FormRules } from '@/common';

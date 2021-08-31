@@ -73,10 +73,10 @@ export default defineComponent({
         const { userInfo, setUserInfo } = useUserInfo();
 
         // 提供给子组件
-        provide(userInfoKey, userInfo)
-        provide(setUserInfoKey, setUserInfo)
+        provide(userInfoKey, userInfo);
+        provide(setUserInfoKey, setUserInfo);
 
-        return { userInfo }
+        return { userInfo };
     }
 });
 </script>

@@ -86,8 +86,10 @@ export default defineComponent({
     name: 'Profile',
     setup() {
         const userInfo = inject(userInfoKey, ref(undefined));
-        const setUserInfo = inject(setUserInfoKey, () => {});
+        const setUserInfo = inject(setUserInfoKey);
         const router = useRouter();
+
+        if (!setUserInfo) throw new Error('找不到 setUserInfo');
 
         // 回调 - 点击登出按钮
         const onLogout = () => {
@@ -101,7 +103,7 @@ export default defineComponent({
         // setup 的时候用户信息不一定载入好了，这里要 watch 一下
         watch(userInfo, newData => {
             if (newData) formData.value = { ...newData, password: '' };
-        }, { immediate: true })
+        }, { immediate: true });
 
         return {
             formData, onSubmit, formRules, formRef, errorInfo, onLogout

@@ -8,22 +8,27 @@
     </template>
 
     <template v-else>
-        <FollowButton :followed="article.author?.following" :username="article.author?.username" size="default" @update="onUpdateAuthor" />
-        <a-button key="favorite" @click="favoriteArticle">Favorite Article ({{article.favoritesCount}})</a-button>
+        <FollowButton
+            :followed="article.author?.following"
+            :username="article.author?.username"
+            size="default"
+            @update="onUpdateAuthor"
+        />
+        <LikeButton :article="article" size="default" />
     </template>
 </a-space>
 </template>
 
-<script lang="ts">
-import { ArticleAPI, Slug, Article, UserAPI, ProfileAPI, UserInfo } from '@/api';
-import { defineComponent, ref, computed, ComputedRef, inject, Ref, PropType, toRefs, useContext } from 'vue';
+<script setup lang="ts">
+import { ArticleAPI, Article, UserInfo } from '@/api';
+import { computed, inject, Ref, toRefs } from 'vue';
 import FollowButton from '@/components/FollowButton.vue';
 import LikeButton from '@/components/LikeButton.vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { userInfoKey } from '@/contants';
 
 const useArticleButton = function (article: Ref<Article>) {
-    const { emit } = useContext()
+    const emit = defineEmits<{ (event: 'update', data: Article): void }>()
     const router = useRouter();
     const userInfo = inject(userInfoKey);
     const showManageButton = computed(() => {
@@ -47,21 +52,11 @@ const useArticleButton = function (article: Ref<Article>) {
     return { showManageButton, deleteArticle, onUpdateAuthor, onUpdateArticle };
 }
 
-export default defineComponent({
-    name: 'ArticleButtonGroup',
-    props: {
-        article: {
-            type: Object as PropType<Article>,
-            required: true
-        }
-    },
-    emits: ['update'],
-    components: { FollowButton, LikeButton },
-    setup(props) {
-        const { article } = toRefs(props);
-        return useArticleButton(article);
-    }
-})
+
+const props = defineProps<{ article: Article }>();
+const { article } = toRefs(props);
+
+const { showManageButton, deleteArticle, onUpdateAuthor } = useArticleButton(article);
 </script>
 
 <style>

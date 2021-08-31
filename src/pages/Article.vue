@@ -1,36 +1,46 @@
 <template>
-<a-row type="flex" justify="center">
-    <a-col :md="12" :xs="24">
-        <a-space direction="vertical" style="width: 100%">
-            <a-card :bordered="false">
-                <!-- 标题 -->
-                <template #title>
-                    <a-typography-title>{{article.title}}</a-typography-title>
-                    <a-space :size="32">
-                    <Author :author="article.author" :date="article.updatedAt" /><ArticleButtonGroup :article="article" @update="onUpdateArticle" />
+<Suspense>
+    <template #default>
+        <a-row type="flex" justify="center">
+            <a-spin v-if="!article" />
+            <a-col v-else :md="12" :xs="24">
+                <a-space direction="vertical" style="width: 100%">
+                    <a-card :bordered="false">
+                        <!-- 标题 -->
+                        <template #title>
+                            <a-typography-title>{{article.title}}</a-typography-title>
+                            <a-space :size="32">
+                                <Author
+                                    :author="article.author"
+                                    :date="article?.updatedAt"
+                                />
+                                <ArticleButtonGroup
+                                    :article="article"
+                                    @update="onUpdateArticle"
+                                />
+                            </a-space>
+                        </template>
 
-                    </a-space>
-                </template>
+                        <!-- 正文 -->
+                        <v-md-preview :text="article.body"></v-md-preview>
 
-                <!-- 右侧操作区 -->
-                <template #extra>
-                    
-                </template>
+                        <TagList :tagList="article.tagList" />
+                    </a-card>
 
-                <!-- 正文 -->
-                <v-md-preview :text="article.body"></v-md-preview>
-
-                <TagList :tagList="article.tagList" />
-            </a-card>
-            <a-card :bordered="false">
-                <a-space style="width: 100%; justify-content: center;" :size="32">
-                    <Author :author="article.author" :date="article.updatedAt" />
-                    <ArticleButtonGroup :article="article" @update="onUpdateArticle" />
+                    <a-card :bordered="false">
+                        <a-space style="width: 100%; justify-content: center;" :size="32">
+                            <Author :author="article.author" :date="article.updatedAt" />
+                            <ArticleButtonGroup :article="article" @update="onUpdateArticle" />
+                        </a-space>
+                    </a-card>
                 </a-space>
-            </a-card>
-        </a-space>
-    </a-col>
-</a-row>
+            </a-col>
+        </a-row>
+    </template>
+    <template #fallback>
+        loading
+    </template>
+</Suspense>
 </template>
 
 <script lang="ts">
@@ -60,10 +70,10 @@ const useArticleButton = function (article: Ref<Article>) {
 export default defineComponent({
     name: 'Article',
     components: { Author, TagList, ArticleButtonGroup },
-    setup() {
+    async setup() {
         const route = useRoute();
         const editSlug = route.params.id as Slug;
-        const article = ref<Partial<Article>>({})
+        const article = ref<Article>();
 
         const fetchArticle = async function () {
             article.value = await ArticleAPI.get(editSlug);
