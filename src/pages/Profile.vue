@@ -39,17 +39,16 @@
 </a-row>
 </template>
 
-<script lang="ts">
-import { SetUserInfo, setUserInfoKey, userInfoKey } from '@/contants';
-import { defineComponent, ref, inject, watch } from 'vue';
+<script lang="ts" setup>
+import { SetLoginInfo, setLoginInfoKey, loginInfoKey } from '@/contants';
+import { ref, inject, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormRules } from '@/types/common';
 import { UpdateSelfUserInfo } from '@/types/services';
 import { updateSelfUserInfo } from '@/services/user';
-import { formatError } from '@/utils';
+import { formatError } from '@/utils/formatError';
 
-/** 表单相关组合式 */
-const useProfileForm = function (setUserInfo?: SetUserInfo) {
+const useProfileForm = function (setLoginInfo?: SetLoginInfo) {
     // 表单规则
     const formRules: FormRules = {
         username: [{ required: true, trigger: 'change' }],
@@ -71,7 +70,7 @@ const useProfileForm = function (setUserInfo?: SetUserInfo) {
         try {
             const selfUserInfo = await updateSelfUserInfo(formData.value);
             // 更新用户信息后把新的内容更新到全局
-            setUserInfo && setUserInfo(selfUserInfo);
+            setLoginInfo && setLoginInfo(selfUserInfo);
             router.replace(`/user/${selfUserInfo.username}`);
         }
         catch (e) {
@@ -84,36 +83,24 @@ const useProfileForm = function (setUserInfo?: SetUserInfo) {
     return { formData, onSubmit, formRules, formRef, errorInfo };
 }
 
-export default defineComponent({
-    name: 'Profile',
-    setup() {
-        const userInfo = inject(userInfoKey, ref(undefined));
-        const setUserInfo = inject(setUserInfoKey);
-        const router = useRouter();
+const userInfo = inject(loginInfoKey, ref(undefined));
+const router = useRouter();
 
-        if (!setUserInfo) throw new Error('找不到 setUserInfo');
+const setLoginInfo = inject(setLoginInfoKey, () => {
+    throw new Error('Profile 中找不到 setLoginInfo');
+});
 
-        // 回调 - 点击登出按钮
-        const onLogout = () => {
-            localStorage.removeItem('token');
-            setUserInfo(undefined);
-            router.push('/home');
-        }
+// 回调 - 点击登出按钮
+const onLogout = () => {
+    localStorage.removeItem('token');
+    setLoginInfo(undefined);
+    router.push('/home');
+}
 
-        const { formData, onSubmit, formRules, formRef, errorInfo } = useProfileForm(setUserInfo);
+const { formData, onSubmit, formRules, formRef, errorInfo } = useProfileForm(setLoginInfo);
 
-        // setup 的时候用户信息不一定载入好了，这里要 watch 一下
-        watch(userInfo, newData => {
-            if (newData) formData.value = { ...newData, password: '' };
-        }, { immediate: true });
-
-        return {
-            formData, onSubmit, formRules, formRef, errorInfo, onLogout
-        }
-    }
-})
+// 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
+watch(userInfo, newData => {
+    if (newData) formData.value = { ...newData, password: '' };
+}, { immediate: true });
 </script>
-
-<style>
-
-</style>

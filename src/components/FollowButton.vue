@@ -18,7 +18,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { size: 'small' });
-
 const emit = defineEmits<{ (event: 'update', data: UserInfo): void }>();
 
 const { username, followed, label: defaultLabel } = toRefs(props);

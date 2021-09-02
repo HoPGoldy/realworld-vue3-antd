@@ -21,10 +21,7 @@ interface Props {
     date?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    date: ''
-})
-
+const props = withDefaults(defineProps<Props>(), { date: '' });
 const { date } = toRefs(props);
 
 const dateLabel = computed(() => {

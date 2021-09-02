@@ -24,7 +24,7 @@ import { computed, inject, Ref, toRefs } from 'vue';
 import FollowButton from '@/components/FollowButton.vue';
 import LikeButton from '@/components/LikeButton.vue';
 import { useRouter } from 'vue-router';
-import { userInfoKey } from '@/contants';
+import { loginInfoKey } from '@/contants';
 import { Article, UserInfo } from '@/types/services';
 import { deleteArticle } from '@/services/article';
 
@@ -33,7 +33,7 @@ const props = defineProps<{ article: Article }>();
 
 const useArticleButton = function (article: Ref<Article>) {
     const router = useRouter();
-    const userInfo = inject(userInfoKey);
+    const userInfo = inject(loginInfoKey);
     const showManageButton = computed(() => {
         return !(!userInfo || userInfo.value?.username !== article.value?.author?.username);
     });

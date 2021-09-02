@@ -16,7 +16,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { size: 'small' });
-const emits = defineEmits(['update']);
+const emits = defineEmits<{ (event: 'update', data: Article): void }>();
 
 const { article, size } = toRefs(props);
 

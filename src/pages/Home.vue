@@ -7,7 +7,7 @@
                 <a-menu-item key="global">
                     <MailOutlined /> Global Feed
                 </a-menu-item>
-                <a-menu-item v-if="!!userInfo" key="your">
+                <a-menu-item v-if="!!loginInfo" key="your">
                     <TeamOutlined /> Your Feed
                 </a-menu-item>
                 <a-menu-item v-if="!!checkedTag" :key="checkedTag">
@@ -23,94 +23,78 @@
     <!-- 右侧热门标签 -->
     <a-col :span="4">
         <a-card title="Popular Tags" :loading="loadingTag">
-            <TagList :tagList="tagList" @click="onClickTag" />
+            <TagList :tagList="popularTags" @click="onClickTag" />
         </a-card>
     </a-col>
 </a-row>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, inject, Ref, watch } from 'vue';
+<script lang="ts" setup>
+import { ref, computed, inject, Ref, watch, watchEffect } from 'vue';
 import ArticleList from '@/components/ArticleList.vue';
 import { MailOutlined, TeamOutlined, TagOutlined } from '@ant-design/icons-vue';
 import TagList from '@/components/TagList.vue';
-import { userInfoKey } from '@/contants';
+import { loginInfoKey } from '@/contants';
 import { useRoute, useRouter } from 'vue-router';
 import { ArticleQuery } from '@/types/services';
 import { fetchFeedArticleList, fetchGlobalArticleList, fetchTagList } from '@/services/article';
+import useLoading from '@/utils/useLoding';
 
-/** 不是标签的 tab 页面值 */
-const NOT_TAG_TAB = ['global', 'your']
-
-/** 所有可能的 tab 值 */
-type TabName = 'global' | 'your' | string
-
-const useTag = function (currentTab: Ref<string[]>) {
-    const currentTabValue = currentTab.value[0] || 'global';
-    const defaultTag = NOT_TAG_TAB.includes(currentTabValue) ? '' : currentTabValue;
-    // 当前选中的 tag
-    const checkedTag = ref<string>(defaultTag);
-    // 所有热门 tag
-    const tagList = ref<string[]>([]);
-    // 是否加载中
-    const loadingTag = ref(true);
-
-    // 获取热门 tag
-    const runfetchTagList = async () => {
-        loadingTag.value = true;
-        const list = await fetchTagList();
-        loadingTag.value = false;
-        tagList.value = list;
-    }
+enum TabType {
+    /** 首页选项卡 */
+    Global = 'global',
+    /** 个人推送选项卡 */
+    Your = 'your'
+}
+const useTag = function (currentTab: Ref<string>) {
+    // 当前选中的标签，如果是固定 tab 的话就说明没有选择标签
+    const checkedTag = ref<string>('');
+    // 所有热门标签
+    const popularTags = ref<string[]>([]);
 
     const onClickTag = (value: string) => {
-        currentTab.value = [value];
+        currentTab.value = value;
         checkedTag.value = value;
     }
 
-    runfetchTagList();
+    // 选中了固定选项卡的话，就清空当前选中标签，否则进行同步
+    watchEffect(() => {
+        if (currentTab.value in TabType) checkedTag.value = '';
+        else checkedTag.value = currentTab.value;
+    })
 
-    return { tagList, checkedTag, loadingTag, onClickTag }
+    // 获取热门 tag
+    const { loading, run: runFetchTagList } = useLoading(async () => {
+        popularTags.value = await fetchTagList();
+    })
+
+    return { popularTags, checkedTag, loading, onClickTag, runFetchTagList }
 }
 
-export default defineComponent({
-    name: 'Home',
-    components: { ArticleList, TagList, MailOutlined, TeamOutlined, TagOutlined },
-    setup() {
-        const router = useRouter();
-        const route = useRoute();
-        // 当前选中的标签页，会用 query 参数最为默认值
-        const currentTab = ref<TabName[]>([route.query.tab as TabName || 'global']);
+const router = useRouter();
+const route = useRoute();
+// 当前选中的标签页，会用 query 参数最为默认值
+const currentTab = ref(route.query.tab as string || TabType.Global);
 
-        // 生成列表查询参数，这个页面只用到了 tag
-        const query = computed<ArticleQuery>(() => {
-            const currentTabValue = currentTab.value[0] || 'global';
-            const tag = NOT_TAG_TAB.includes(currentTabValue) ? '' : currentTabValue;
-            return { tag };
-        });
+const { popularTags, checkedTag, loading: loadingTag, onClickTag, runFetchTagList } = useTag(currentTab);
 
-        // 根据当前标签页（如果是 Your Feed 的话）来选择对应的请求方法
-        const queryRequest = computed(() => {
-            return currentTab.value.includes('your') ? fetchFeedArticleList : fetchGlobalArticleList;
-        });
+// 生成列表查询参数，这个页面只用到了标签
+const query = computed<ArticleQuery>(() => ({ tag: checkedTag.value }));
 
-        // 根据当前是否有用户信息决定是否显示 Your Feed 标签页
-        const userInfo = inject(userInfoKey);
+// 根据当前选中标签页来选择对应的请求方法
+const queryRequest = computed(() => {
+    return currentTab.value === TabType.Your ? fetchFeedArticleList : fetchGlobalArticleList;
+});
 
-        // 把当前选择的标签同步到 url query
-        watch(currentTab, tabs => {
-            router.push({ query: { ...route.query, tab: tabs[0] }})
-        })
+// 根据当前是否有用户信息决定是否显示 Your Feed 标签页
+const loginInfo = inject(loginInfoKey);
 
-        return {
-            userInfo,
-            currentTab,
-            query,
-            queryRequest,
-            ...useTag(currentTab)
-        }
-    }
-})
+// 把当前选择的标签同步到 url query
+watch(currentTab, tabs => {
+    router.push({ query: { ...route.query, tab: tabs[0] }});
+});
+
+runFetchTagList();
 </script>
 
 <style scoped>

@@ -4,9 +4,9 @@
 
 <script lang="ts" setup>
 withDefaults(defineProps<{ tagList?: string[] }>(), { tagList: () => [] });
-const emit = defineEmits(['click']);
+const emits = defineEmits<{ (event: 'click', data: string): void }>();
 
-const onClickTag = (value: string) => emit('click', value);
+const onClickTag = (value: string) => emits('click', value);
 </script>
 
 <style scoped>

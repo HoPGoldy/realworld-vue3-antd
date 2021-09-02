@@ -37,26 +37,16 @@
 </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, toRef, computed, reactive, inject, ref, ComputedRef } from "vue";
-import { setUserInfoKey } from '@/contants';
+<script lang="ts" setup>
+import { toRef, computed, reactive, inject, ref, Ref } from "vue";
+import { setLoginInfoKey } from '@/contants';
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { FormRules } from '@/types/common';
 import { login, register } from "@/services/user";
-import { formatError } from "@/utils";
+import { formatError } from "@/utils/formatError";
 import { RegisterInfo } from "@/types/services";
 
-/**
- * 获取页面状态
- * 因为这个页面有可能是注册或者登录
- */
-const usePageMode = function () {
-    const path = toRef(useRoute(), "path");
-    return computed(() => path.value === "/login");
-}
-
-/** 登录表单相关 */
-const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
+const useLoginForm = function (isLoginPage: Ref<boolean>) {
     const formRules: FormRules = {
         username: [{ required: true, trigger: 'change' }],
         password: [{ required: true, trigger: 'change' }],
@@ -69,7 +59,7 @@ const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
     const formData = reactive<RegisterInfo>({ username: '', password: '', email: '', });
     
     // 设置全局用户信息
-    const setUserInfo = inject(setUserInfoKey);
+    const setUserInfo = inject(setLoginInfoKey);
 
     // 回调 - 点击登录 / 注册按钮
     const onSubmit = async () => {
@@ -95,17 +85,9 @@ const useLoginForm = function (isLoginPage: ComputedRef<boolean>) {
     return { formData, onSubmit, formRules, formRef, errorInfo };
 }
 
-export default defineComponent({
-    name: "Login",
-    setup() {
-        const isLoginPage = usePageMode();
-
-        return {
-            isLoginPage,
-            ...useLoginForm(isLoginPage)
-        };
-    },
-});
+const path = toRef(useRoute(), 'path');
+const isLoginPage = computed(() => path.value === "/login");
+const { formData, onSubmit, formRules, formRef, errorInfo } = useLoginForm(isLoginPage);
 </script>
 
 <style></style>

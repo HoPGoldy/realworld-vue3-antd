@@ -4,10 +4,10 @@
             <h1 class="logo">conduit</h1>
             <div class="operation">
                 <router-link to="/">Home</router-link>
-                <template v-if="userInfo">
+                <template v-if="loginInfo">
                     <router-link to="/editor"><DiffOutlined /> New Article</router-link>
                     <router-link to="/settings"><SettingOutlined /> Setting</router-link>
-                    <router-link :to="`/user/${userInfo.username}`">{{userInfo.username}}</router-link>
+                    <router-link :to="`/user/${loginInfo.username}`">{{loginInfo.username}}</router-link>
                 </template>
                 <template v-else>
                     <router-link to="/login">Sign in</router-link>
@@ -35,18 +35,18 @@
 <script lang="ts">
 import { defineComponent, provide, onMounted, ref } from "vue";
 import { setToken } from '@/plugins/axios';
-import { userInfoKey, SetUserInfo, setUserInfoKey } from './contants';
+import { loginInfoKey, SetLoginInfo, setLoginInfoKey } from './contants';
 import { DiffOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import { fetchSelfUserInfo } from "./services/user";
 import { SelfUserInfo } from "./types/services";
 
 /** 创建全局用户信息 */
-const useUserInfo = function () {
+const useLoginInfo = function () {
     // 用户信息
-    const userInfo = ref<SelfUserInfo | undefined>(undefined);
+    const loginInfo = ref<SelfUserInfo | undefined>(undefined);
     // 更新用户信息
-    const setUserInfo: SetUserInfo = newInfo => {
-        userInfo.value = newInfo;
+    const setLoginInfo: SetLoginInfo = newInfo => {
+        loginInfo.value = newInfo;
         setToken(newInfo?.token);
 
         if (newInfo?.token) localStorage.setItem('token', newInfo.token);
@@ -61,23 +61,23 @@ const useUserInfo = function () {
 
         setToken(token);
         const userInfo = await fetchSelfUserInfo();
-        setUserInfo(userInfo);
+        setLoginInfo(userInfo);
     });
 
-    return { userInfo, setUserInfo };
+    return { loginInfo, setLoginInfo };
 }
 
 export default defineComponent({
     name: "App",
     components: { DiffOutlined, SettingOutlined },
     setup() {
-        const { userInfo, setUserInfo } = useUserInfo();
+        const { loginInfo, setLoginInfo } = useLoginInfo();
 
         // 提供给子组件
-        provide(userInfoKey, userInfo);
-        provide(setUserInfoKey, setUserInfo);
+        provide(loginInfoKey, loginInfo);
+        provide(setLoginInfoKey, setLoginInfo);
 
-        return { userInfo };
+        return { loginInfo };
     }
 });
 </script>
