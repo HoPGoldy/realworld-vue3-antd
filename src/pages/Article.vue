@@ -3,7 +3,10 @@
     <a-col :md="12" :xs="24">
         <Suspense>
             <template #default>
-                <ArticleDetail :slug="querySlug" />
+                <div>
+                    <ArticleDetail :slug="querySlug" />
+                    <CommentList style="margin-top: 8px;" :slug="querySlug" />
+                </div>
             </template>
             <template #fallback>
                 <a-skeleton active />
@@ -16,6 +19,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 import ArticleDetail from '@/components/Article/ArticleDetail.vue';
+import CommentList from '@/components/Comment/ComentList.vue';
 import { Slug } from '@/types/services';
 
 const route = useRoute();

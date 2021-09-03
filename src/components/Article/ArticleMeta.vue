@@ -4,20 +4,22 @@
 
     <a-space>
         <template v-if="showManageButton">
-            <a-button key="edit">
+            <a-button key="edit" size="small">
                 <router-link :to="`/editor/${article.slug}`">Edit Article</router-link>
             </a-button>
-            <a-button key="delete" danger @click="onDeleteArticle">Delete Article</a-button>
+            <a-button key="delete" size="small" danger :loading="deleting" @click="onDeleteArticle">
+                Delete Article
+            </a-button>
         </template>
 
         <template v-else>
             <FollowButton
                 :followed="article.author?.following"
                 :username="article.author?.username"
-                size="default"
+                size="small"
                 @update="onUpdateAuthor"
             />
-            <LikeButton :article="article" size="default" />
+            <LikeButton :article="article" size="small" />
         </template>
     </a-space>
 </a-space>
@@ -32,6 +34,7 @@ import { useRouter } from 'vue-router';
 import { loginInfoKey } from '@/contants';
 import { Article, UserInfo } from '@/types/services';
 import { deleteArticle } from '@/services/article';
+import useLoading from '@/utils/useLoding';
 
 const emits = defineEmits<{ (event: 'update', data: Article): void }>();
 const props = defineProps<{ article: Article }>();
@@ -43,10 +46,10 @@ const useArticleButton = function (article: Ref<Article>) {
         return !(!userInfo || userInfo.value?.username !== article.value?.author?.username);
     });
 
-    const onDeleteArticle = async function () {
+    const { loading: deleting, run: onDeleteArticle } = useLoading(async () => {
         await deleteArticle(article.value.slug);
         router.push(`/home`);
-    }
+    })
 
     const onUpdateArticle = function (newArticle: Article) {
         emits('update', newArticle);
@@ -57,10 +60,10 @@ const useArticleButton = function (article: Ref<Article>) {
         emits('update', newArticle);
     }
 
-    return { showManageButton, onDeleteArticle, onUpdateAuthor, onUpdateArticle };
+    return { showManageButton, deleting, onDeleteArticle, onUpdateAuthor, onUpdateArticle };
 }
 
 const { article } = toRefs(props);
 
-const { showManageButton, onDeleteArticle, onUpdateAuthor } = useArticleButton(article);
+const { showManageButton, deleting, onDeleteArticle, onUpdateAuthor } = useArticleButton(article);
 </script>

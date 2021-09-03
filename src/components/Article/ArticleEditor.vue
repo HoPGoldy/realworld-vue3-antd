@@ -5,10 +5,7 @@
         <a-typography-title>{{pageTitle}}</a-typography-title>
     </template>
 
-    <!-- 提交报错信息 -->
-    <div v-if="errorInfo" style="margin-bottom: 2em;" >
-        <a-alert style="margin-bottom: 1em;" v-for="errorContent in errorInfo" :key="errorContent" :message="errorContent" type="error" />
-    </div>
+    <CrizmasErrorAlert :errorMsg="errorMsg" />
 
     <!-- 编辑表单 -->
     <a-form :label-col="{ span: 3 }" label-align="right">
@@ -42,10 +39,10 @@
 import { ref, computed, ComputedRef, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FormRules } from '@/types/common';
-import { ArticleContent, Slug } from '@/types/services';
+import { ArticleContent, Slug, CrizmasError } from '@/types/services';
 import { createArticle, fetchArticle, updateArticle } from '@/services/article';
 import { Form } from 'ant-design-vue';
-import { formatError } from '@/utils/formatError';
+import CrizmasErrorAlert from "@/components/CrizmasErrorAlert.vue";
 import useLoading from '@/utils/useLoding';
 
 const useArticleInfo = function () {
@@ -65,14 +62,14 @@ const useEditForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
     });
     const formData = ref<ArticleContent>({ title: '', description: '', body: '', tagList: [] });
     const router = useRouter();
-    const errorInfo = ref<string[]>();
+    const errorMsg = ref<CrizmasError>();
 
     const { validate, validateInfos } = Form.useForm(formData, formRules);
 
     // 回调 - 点击发布按钮
     const { loading: submiting, run: onSubmit } = useLoading(async () => {
         try {
-            errorInfo.value = undefined;
+            errorMsg.value = undefined;
             await validate();
 
             // 根据页面状态选择是更新还是新建
@@ -80,24 +77,22 @@ const useEditForm = function (slug: Slug, isCreatePage: ComputedRef<boolean>) {
                 await createArticle(formData.value) :
                 await updateArticle(slug, formData.value);
 
-            console.log(newArticle)
-
             // 建好了就去对应的文章页面
             router.push(`/article/${newArticle.slug}`);
         }
         catch (e) {
             console.error(e);
             // 失败了就尝试显示错误信息
-            errorInfo.value = formatError(e.response.data.errors);
+            errorMsg.value = e.response.data.errors;
         }
     });
 
-    return { formData, onSubmit, submiting, validateInfos, errorInfo };
+    return { formData, onSubmit, submiting, validateInfos, errorMsg };
 }
 
 const { editSlug, isCreatePage } = useArticleInfo();
 
-const { formData, onSubmit, validateInfos, errorInfo, submiting } = useEditForm(editSlug, isCreatePage);
+const { formData, onSubmit, validateInfos, errorMsg, submiting } = useEditForm(editSlug, isCreatePage);
 
 // 是编辑页面的话就需要回显文章内容
 if (!isCreatePage.value) {

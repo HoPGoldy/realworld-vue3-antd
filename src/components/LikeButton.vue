@@ -1,6 +1,9 @@
 <template>
-<a-button :type="article.favorited ? 'primary' : 'default'" :size="size" @click="onClick">
-    <LikeOutlined /> {{ article.favoritesCount }}
+<a-button :loading="loading" :type="article.favorited ? 'primary' : 'default'" :size="size" @click="onClick">
+    <template #icon>
+      <LikeOutlined />
+    </template>
+    {{ article.favoritesCount }}
 </a-button>
 </template>
 
@@ -9,6 +12,7 @@ import { toRefs } from "vue";
 import { LikeOutlined } from "@ant-design/icons-vue";
 import { Article } from "@/types/services";
 import { favoriteArticle, unfavoriteArticle } from "@/services/article";
+import useLoading from "@/utils/useLoding";
 
 interface Props {
     article: Article
@@ -21,11 +25,11 @@ const emits = defineEmits<{ (event: 'update', data: Article): void }>();
 const { article, size } = toRefs(props);
 
 /** 回调 - 点击喜欢按钮 */
-const onClick = async function () {
+const { loading, run: onClick } = useLoading(async () => {
     const request = article.value.favorited ? unfavoriteArticle : favoriteArticle;
     const resp = await request(article.value.slug);
     emits('update', resp);
-}
+})
 </script>
 
 <style>

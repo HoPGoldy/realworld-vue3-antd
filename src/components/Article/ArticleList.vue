@@ -42,8 +42,8 @@
 <script lang="ts" setup>
 import { watchEffect, toRefs, ref, reactive, computed, watch } from "vue";
 import dayjs from 'dayjs';
-import LikeButton from './LikeButton.vue';
-import TagList from './TagList.vue';
+import LikeButton from '@/components/LikeButton.vue';
+import TagList from '@/components/TagList.vue';
 import { useRoute, useRouter } from "vue-router";
 import { Article, ArticleList, ArticleParams, ArticleQuery } from "@/types/services";
 import { fetchGlobalArticleList } from "@/services/article";

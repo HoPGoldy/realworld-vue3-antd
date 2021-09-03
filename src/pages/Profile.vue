@@ -7,10 +7,7 @@
                 <a-typography-title>Your Settings</a-typography-title>
             </template>
 
-            <!-- 提交报错信息 -->
-            <div v-if="errorInfo" style="margin-bottom: 2em;" >
-                <a-alert style="margin-bottom: 1em;" v-for="errorContent in errorInfo" :key="errorContent" :message="errorContent" type="error" />
-            </div>
+            <CrizmasErrorAlert :errorMsg="errorMsg"/>
 
             <!-- 用户配置表单 -->
             <a-form :model="formData" :label-col="{ span: 5 }" label-align="left" :rules="formRules" ref="formRef">
@@ -32,8 +29,12 @@
             </a-form>
 
             <!-- 按钮区 -->
-            <a-button type="primary" @click="onSubmit" block>Update Setting</a-button>
-            <a-button style="margin-top: 1em" type="link" @click="onLogout" block>Or click here to logout</a-button>
+            <a-button :loading="submiting" type="primary" @click="onSubmit" block>
+                Update Setting
+            </a-button>
+            <a-button style="margin-top: 1em" type="link" @click="onLogout" block>
+                Or click here to logout
+            </a-button>
         </a-card>
     </a-col>
 </a-row>
@@ -44,12 +45,13 @@ import { SetLoginInfo, setLoginInfoKey, loginInfoKey } from '@/contants';
 import { ref, inject, watch, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormRules } from '@/types/common';
-import { LoginInfo, SelfUserInfo, UpdateSelfUserInfo } from '@/types/services';
+import { CrizmasError, SelfUserInfo, UpdateSelfUserInfo } from '@/types/services';
 import { updateSelfUserInfo } from '@/services/user';
-import { formatError } from '@/utils/formatError';
+import CrizmasErrorAlert from "@/components/CrizmasErrorAlert.vue";
 import { Form } from 'ant-design-vue';
+import useLoading from '@/utils/useLoding';
 
-const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLoginInfo?: SetLoginInfo) {
+const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLoginInfo: SetLoginInfo) {
     // 表单规则
     const formRules: FormRules = {
         username: [{ required: true, trigger: 'change' }],
@@ -58,7 +60,7 @@ const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLo
     }
     const formRef = ref();
     const router = useRouter();
-    const errorInfo = ref<string[]>();
+    const errorMsg = ref<CrizmasError>();
 
     // 表单数据
     const formData = ref<UpdateSelfUserInfo>({ username: '', password: '', email: '', bio: '', image: '' });
@@ -69,24 +71,24 @@ const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLo
     }, { immediate: true });
 
     // 回调 - 点击提交表单按钮
-    const onSubmit = async () => {
-        errorInfo.value = undefined;
+    const { loading: submiting, run: onSubmit } = useLoading(async () => {
+        errorMsg.value = undefined;
         await formRef.value.validate();
 
         try {
             const selfUserInfo = await updateSelfUserInfo(formData.value);
             // 更新用户信息后把新的内容更新到全局
-            setLoginInfo && setLoginInfo(selfUserInfo);
+            setLoginInfo(selfUserInfo);
             router.replace(`/user/${selfUserInfo.username}`);
         }
         catch (e) {
             console.error(e);
             // 失败了就尝试显示错误信息
-            errorInfo.value = formatError(e.response.data.errors);
+            errorMsg.value = e.response.data.errors;
         }
-    };
+    });
 
-    return { formData, onSubmit, formRules, formRef, errorInfo };
+    return { formData, submiting, onSubmit, formRules, formRef, errorMsg };
 }
 
 const loginInfo = inject(loginInfoKey, ref(undefined));
@@ -103,5 +105,5 @@ const onLogout = () => {
     router.push('/home');
 }
 
-const { formData, onSubmit, formRules, formRef, errorInfo } = useProfileForm(loginInfo, setLoginInfo);
+const { formData, submiting, onSubmit, formRules, formRef, errorMsg } = useProfileForm(loginInfo, setLoginInfo);
 </script>

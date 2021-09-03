@@ -124,3 +124,7 @@ export interface Comment {
     /** 评论人 */
     author: UserInfo
 }
+
+export interface CrizmasError {
+    [errorKey: string]: string[]
+}

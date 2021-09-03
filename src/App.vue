@@ -2,18 +2,23 @@
     <a-layout>
         <a-layout-header class="header">
             <h1 class="logo">conduit</h1>
-            <div class="operation">
+            <a-space size="middle">
                 <router-link to="/">Home</router-link>
                 <template v-if="loginInfo">
                     <router-link to="/editor"><DiffOutlined /> New Article</router-link>
                     <router-link to="/settings"><SettingOutlined /> Setting</router-link>
-                    <router-link :to="`/user/${loginInfo.username}`">{{loginInfo.username}}</router-link>
+                    <router-link :to="`/user/${loginInfo.username}`">
+                        <a-space align="baseline">
+                            <a-avatar size="small" :src="loginInfo.image" />
+                            {{loginInfo.username}}
+                        </a-space>
+                    </router-link>
                 </template>
                 <template v-else>
                     <router-link to="/login">Sign in</router-link>
                     <router-link to="/register">Sign up</router-link>
                 </template>
-            </div>
+            </a-space>
         </a-layout-header>
 
         <a-layout-content :style="{ padding: '2em 4em', marginTop: '64px' }">
@@ -94,10 +99,6 @@ export default defineComponent({
 
 .header .logo {
     color: white;
-}
-
-.header .operation a {
-    margin-left: 1em;
 }
 </style>
 

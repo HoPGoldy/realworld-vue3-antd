@@ -11,7 +11,7 @@
                     <TeamOutlined /> Your Feed
                 </a-menu-item>
                 <a-menu-item v-if="!!checkedTag" :key="checkedTag">
-                    <TagOutlined /> #{{checkedTag}}
+                    <TagOutlined /> {{checkedTag}}
                 </a-menu-item>
             </a-menu>
 
@@ -31,7 +31,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, inject, Ref, watch, watchEffect } from 'vue';
-import ArticleList from '@/components/ArticleList.vue';
+import ArticleList from '@/components/Article/ArticleList.vue';
 import { MailOutlined, TeamOutlined, TagOutlined } from '@ant-design/icons-vue';
 import TagList from '@/components/TagList.vue';
 import { loginInfoKey } from '@/contants';
@@ -90,7 +90,7 @@ const queryRequest = computed(() => {
 });
 
 // 根据当前是否有用户信息决定是否显示 Your Feed 标签页
-const loginInfo = inject(loginInfoKey);
+const loginInfo = inject(loginInfoKey, ref(undefined));
 
 // 把当前选择的标签同步到 url query
 watch(currentTab, tab => {

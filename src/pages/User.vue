@@ -45,11 +45,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, computed, Ref, ComputedRef, watchEffect } from 'vue';
+import { ref, inject, computed, Ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { SettingOutlined, PlusOutlined, BuildOutlined, HeartOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, BuildOutlined, HeartOutlined } from '@ant-design/icons-vue';
 import { loginInfoKey } from '@/contants';
-import ArticleList from '@/components/ArticleList.vue';
+import ArticleList from '@/components/Article/ArticleList.vue';
 import FollowButton from '@/components/FollowButton.vue';
 import { UserInfo } from '@/types/services';
 import { fetchUserProfile } from '@/services/profile';

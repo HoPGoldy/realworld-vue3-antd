@@ -1,8 +1,8 @@
 import axios from '@/plugins/axios';
-import { CommentId, Slug } from '@/types/services';
+import { Comment, CommentId, Slug } from '@/types/services';
 
 /** 获取指定文章的评论列表 */
-export const getCommentList = async function (slug: Slug) {
+export const fetchCommentList = async function (slug: Slug) {
     const data: { comments: Comment[] } = await axios.get(`/articles/${slug}/comments`);
     return data.comments;
 }
