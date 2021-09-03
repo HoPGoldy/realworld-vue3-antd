@@ -1,6 +1,6 @@
 <template>
 <a-row type="flex" justify="center">
-    <a-col :md="12" :xs="24" style="margin-top: 1em;">
+    <a-col :md="16" :xs="24" style="margin-top: 1em;">
         <Suspense>
             <template #default>
                 <ArticleEditor />
@@ -14,5 +14,5 @@
 </template>
 
 <script lang="ts" setup>
-import ArticleEditor from '@/components/ArticleEditor.vue';
+import ArticleEditor from '@/components/Article/ArticleEditor.vue';
 </script>

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 export default function useLoading<T extends any[], R> (fn: (...args: T) => Promise<R>) {
-    const loading = ref(true);
+    const loading = ref(false);
 
     const run = async (...args: T) => {
         loading.value = true;

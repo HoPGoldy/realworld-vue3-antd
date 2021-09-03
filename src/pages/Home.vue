@@ -3,7 +3,7 @@
     <a-col :offset="4" :span="12">
         <a-card>
             <!-- tab 切换 -->
-            <a-menu v-model:selectedKeys="currentTab" mode="horizontal">
+            <a-menu v-model:selectedKeys="[currentTab]" mode="horizontal">
                 <a-menu-item key="global">
                     <MailOutlined /> Global Feed
                 </a-menu-item>
@@ -46,6 +46,9 @@ enum TabType {
     /** 个人推送选项卡 */
     Your = 'your'
 }
+
+const TAB_TYPE: string[] = [TabType.Global, TabType.Your];
+
 const useTag = function (currentTab: Ref<string>) {
     // 当前选中的标签，如果是固定 tab 的话就说明没有选择标签
     const checkedTag = ref<string>('');
@@ -59,7 +62,7 @@ const useTag = function (currentTab: Ref<string>) {
 
     // 选中了固定选项卡的话，就清空当前选中标签，否则进行同步
     watchEffect(() => {
-        if (currentTab.value in TabType) checkedTag.value = '';
+        if (TAB_TYPE.includes(currentTab.value)) checkedTag.value = '';
         else checkedTag.value = currentTab.value;
     })
 
@@ -90,8 +93,8 @@ const queryRequest = computed(() => {
 const loginInfo = inject(loginInfoKey);
 
 // 把当前选择的标签同步到 url query
-watch(currentTab, tabs => {
-    router.push({ query: { ...route.query, tab: tabs[0] }});
+watch(currentTab, tab => {
+    router.push({ query: { ...route.query, tab }});
 });
 
 runFetchTagList();

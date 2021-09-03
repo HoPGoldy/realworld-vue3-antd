@@ -41,14 +41,15 @@
 
 <script lang="ts" setup>
 import { SetLoginInfo, setLoginInfoKey, loginInfoKey } from '@/contants';
-import { ref, inject, watch } from 'vue';
+import { ref, inject, watch, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormRules } from '@/types/common';
-import { UpdateSelfUserInfo } from '@/types/services';
+import { LoginInfo, SelfUserInfo, UpdateSelfUserInfo } from '@/types/services';
 import { updateSelfUserInfo } from '@/services/user';
 import { formatError } from '@/utils/formatError';
+import { Form } from 'ant-design-vue';
 
-const useProfileForm = function (setLoginInfo?: SetLoginInfo) {
+const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLoginInfo?: SetLoginInfo) {
     // 表单规则
     const formRules: FormRules = {
         username: [{ required: true, trigger: 'change' }],
@@ -61,6 +62,11 @@ const useProfileForm = function (setLoginInfo?: SetLoginInfo) {
 
     // 表单数据
     const formData = ref<UpdateSelfUserInfo>({ username: '', password: '', email: '', bio: '', image: '' });
+
+    // 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
+    watch(loginInfo, newData => {
+        if (newData) formData.value = { ...newData, password: '' };
+    }, { immediate: true });
 
     // 回调 - 点击提交表单按钮
     const onSubmit = async () => {
@@ -83,7 +89,7 @@ const useProfileForm = function (setLoginInfo?: SetLoginInfo) {
     return { formData, onSubmit, formRules, formRef, errorInfo };
 }
 
-const userInfo = inject(loginInfoKey, ref(undefined));
+const loginInfo = inject(loginInfoKey, ref(undefined));
 const router = useRouter();
 
 const setLoginInfo = inject(setLoginInfoKey, () => {
@@ -97,10 +103,5 @@ const onLogout = () => {
     router.push('/home');
 }
 
-const { formData, onSubmit, formRules, formRef, errorInfo } = useProfileForm(setLoginInfo);
-
-// 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
-watch(userInfo, newData => {
-    if (newData) formData.value = { ...newData, password: '' };
-}, { immediate: true });
+const { formData, onSubmit, formRules, formRef, errorInfo } = useProfileForm(loginInfo, setLoginInfo);
 </script>

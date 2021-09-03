@@ -1,26 +1,31 @@
 <template>
-<a-space style="width: 100%; justify-content: center;">
-    <template v-if="showManageButton">
-        <a-button key="edit">
-            <router-link :to="`/editor/${article.slug}`">Edit Article</router-link>
-        </a-button>
-        <a-button key="delete" type="danger" @click="onDeleteArticle">Delete Article</a-button>
-    </template>
+<a-space :size="32">
+    <Author :author="article.author" :date="article.updatedAt" />
 
-    <template v-else>
-        <FollowButton
-            :followed="article.author?.following"
-            :username="article.author?.username"
-            size="default"
-            @update="onUpdateAuthor"
-        />
-        <LikeButton :article="article" size="default" />
-    </template>
+    <a-space>
+        <template v-if="showManageButton">
+            <a-button key="edit">
+                <router-link :to="`/editor/${article.slug}`">Edit Article</router-link>
+            </a-button>
+            <a-button key="delete" danger @click="onDeleteArticle">Delete Article</a-button>
+        </template>
+
+        <template v-else>
+            <FollowButton
+                :followed="article.author?.following"
+                :username="article.author?.username"
+                size="default"
+                @update="onUpdateAuthor"
+            />
+            <LikeButton :article="article" size="default" />
+        </template>
+    </a-space>
 </a-space>
 </template>
 
 <script setup lang="ts">
 import { computed, inject, Ref, toRefs } from 'vue';
+import Author from '@/components/Author.vue';
 import FollowButton from '@/components/FollowButton.vue';
 import LikeButton from '@/components/LikeButton.vue';
 import { useRouter } from 'vue-router';

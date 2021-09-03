@@ -10,8 +10,8 @@ export const setToken = (newToken: string | undefined) => {
 }
 
 // 后端地址
-// axios.defaults.baseURL = 'https://conduit.productionready.io/api/';
-axios.defaults.baseURL = 'https://realworld-temp-api.herokuapp.com/api/';
+axios.defaults.baseURL = 'https://conduit.productionready.io/api/';
+// axios.defaults.baseURL = 'https://realworld-temp-api.herokuapp.com/api/';
 
 axios.interceptors.response.use(
     resp => resp.data,
