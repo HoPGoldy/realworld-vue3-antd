@@ -10,20 +10,20 @@
             <CrizmasErrorAlert :errorMsg="errorMsg"/>
 
             <!-- 用户配置表单 -->
-            <a-form :model="formData" :label-col="{ span: 5 }" label-align="left" :rules="formRules" ref="formRef">
-                <a-form-item name="image" label="Avatar">
+            <a-form :label-col="{ span: 5 }" label-align="left">
+                <a-form-item label="Avatar">
                     <a-input v-model:value="formData.image" placeholder="URL of profile picture" />
                 </a-form-item>
-                <a-form-item name="username" label="Username">
+                <a-form-item v-bind="validateInfos.username" label="Username">
                     <a-input v-model:value="formData.username" placeholder="Username" />
                 </a-form-item>
                 <a-form-item name="bio" label="Short bio">
                     <a-textarea v-model:value="formData.bio" placeholder="Short bio about you" :auto-size="{ minRows: 3 }" />
                 </a-form-item>
-                <a-form-item name="email" label="Email">
+                <a-form-item v-bind="validateInfos.email" label="Email">
                     <a-input v-model:value="formData.email" placeholder="Email" />
                 </a-form-item>
-                <a-form-item name="password" label="Password">
+                <a-form-item v-bind="validateInfos.password" label="Password">
                     <a-input-password v-model:value="formData.password" placeholder="New Password" />
                 </a-form-item>
             </a-form>
@@ -41,55 +41,13 @@
 </template>
 
 <script lang="ts" setup>
-import { SetLoginInfo, setLoginInfoKey, loginInfoKey } from '@/contants';
-import { ref, inject, watch, Ref } from 'vue';
+import { setLoginInfoKey, loginInfoKey } from '@/contants';
+import { ref, inject, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { FormRules } from '@/types/common';
-import { CrizmasError, SelfUserInfo, UpdateSelfUserInfo } from '@/types/services';
+import { UpdateSelfUserInfo } from '@/types/services';
 import { updateSelfUserInfo } from '@/services/user';
 import CrizmasErrorAlert from "@/components/CrizmasErrorAlert.vue";
-import { Form } from 'ant-design-vue';
-import useLoading from '@/utils/useLoding';
-
-const useProfileForm = function (loginInfo: Ref<SelfUserInfo | undefined>, setLoginInfo: SetLoginInfo) {
-    // 表单规则
-    const formRules: FormRules = {
-        username: [{ required: true, trigger: 'change' }],
-        password: [{ required: true, trigger: 'change' }],
-        email: [{ required: true, trigger: 'change' }],
-    }
-    const formRef = ref();
-    const router = useRouter();
-    const errorMsg = ref<CrizmasError>();
-
-    // 表单数据
-    const formData = ref<UpdateSelfUserInfo>({ username: '', password: '', email: '', bio: '', image: '' });
-
-    // 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
-    watch(loginInfo, newData => {
-        if (newData) formData.value = { ...newData, password: '' };
-    }, { immediate: true });
-
-    // 回调 - 点击提交表单按钮
-    const { loading: submiting, run: onSubmit } = useLoading(async () => {
-        errorMsg.value = undefined;
-        await formRef.value.validate();
-
-        try {
-            const selfUserInfo = await updateSelfUserInfo(formData.value);
-            // 更新用户信息后把新的内容更新到全局
-            setLoginInfo(selfUserInfo);
-            router.replace(`/user/${selfUserInfo.username}`);
-        }
-        catch (e) {
-            console.error(e);
-            // 失败了就尝试显示错误信息
-            errorMsg.value = e.response.data.errors;
-        }
-    });
-
-    return { formData, submiting, onSubmit, formRules, formRef, errorMsg };
-}
+import { useForm } from '@/composable/useForm';
 
 const loginInfo = inject(loginInfoKey, ref(undefined));
 const router = useRouter();
@@ -98,12 +56,36 @@ const setLoginInfo = inject(setLoginInfoKey, () => {
     throw new Error('Profile 中找不到 setLoginInfo');
 });
 
+const { formData, onSubmit, validateInfos, errorMsg, submiting } = useForm<UpdateSelfUserInfo>(
+    {
+        username: '',
+        password: '',
+        email: '',
+        bio: '',
+        image: ''
+    },
+    {
+        username: [{ required: true, trigger: 'change' }],
+        password: [{ required: true, trigger: 'change' }],
+        email: [{ required: true, trigger: 'change' }]
+    },
+    async formData => {
+        const selfUserInfo = await updateSelfUserInfo(formData);
+        // 更新用户信息后把新的内容更新到全局
+        setLoginInfo(selfUserInfo);
+        router.replace(`/user/${selfUserInfo.username}`);
+    }
+)
+
+// 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
+watch(loginInfo, newData => {
+    if (newData) formData.value = { ...newData, password: '' };
+}, { immediate: true });
+
 // 回调 - 点击登出按钮
 const onLogout = () => {
     localStorage.removeItem('token');
     setLoginInfo(undefined);
     router.push('/home');
 }
-
-const { formData, submiting, onSubmit, formRules, formRef, errorMsg } = useProfileForm(loginInfo, setLoginInfo);
 </script>

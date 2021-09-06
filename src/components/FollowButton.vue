@@ -31,12 +31,12 @@ const { loading, run: onClick } = useLoading(async () => {
     const request = followed.value ? unfollowUser : followUser;
     const resp = await request(username.value);
     emit('update', resp);
-})
+});
 
 const label = computed(() => {
     if (defaultLabel && defaultLabel.value) return defaultLabel.value;
     return `${followed.value ? 'Unfollow' : 'Follow'} ${username.value}`;
-})
+});
 </script>
 
 <style>

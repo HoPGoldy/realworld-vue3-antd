@@ -10,4 +10,4 @@ import hljs from 'highlight.js';
 VMdEditor.use(githubTheme, { Hljs: hljs });
 VMdPreview.use(githubTheme, { Hljs: hljs });
 
-export default { VMdEditor, VMdPreview };
+export { VMdEditor, VMdPreview };

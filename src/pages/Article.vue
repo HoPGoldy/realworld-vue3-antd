@@ -1,6 +1,6 @@
 <template>
 <a-row type="flex" justify="center">
-    <a-col :md="12" :xs="24">
+    <a-col :md="14" :xs="24">
         <Suspense>
             <template #default>
                 <div>

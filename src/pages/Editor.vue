@@ -1,6 +1,6 @@
 <template>
 <a-row type="flex" justify="center">
-    <a-col :md="16" :xs="24" style="margin-top: 1em;">
+    <a-col :md="14" :xs="24" style="margin-top: 1em;">
         <Suspense>
             <template #default>
                 <ArticleEditor />

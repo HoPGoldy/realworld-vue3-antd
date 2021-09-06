@@ -37,15 +37,14 @@
     </a-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent, provide, onMounted, ref } from "vue";
+<script lang="ts" setup>
+import { provide, onMounted, ref } from "vue";
 import { setToken } from '@/plugins/axios';
 import { loginInfoKey, SetLoginInfo, setLoginInfoKey } from './contants';
 import { DiffOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import { fetchSelfUserInfo } from "./services/user";
 import { SelfUserInfo } from "./types/services";
 
-/** 创建全局用户信息 */
 const useLoginInfo = function () {
     // 用户信息
     const loginInfo = ref<SelfUserInfo | undefined>(undefined);
@@ -72,19 +71,11 @@ const useLoginInfo = function () {
     return { loginInfo, setLoginInfo };
 }
 
-export default defineComponent({
-    name: "App",
-    components: { DiffOutlined, SettingOutlined },
-    setup() {
-        const { loginInfo, setLoginInfo } = useLoginInfo();
+const { loginInfo, setLoginInfo } = useLoginInfo();
 
-        // 提供给子组件
-        provide(loginInfoKey, loginInfo);
-        provide(setLoginInfoKey, setLoginInfo);
-
-        return { loginInfo };
-    }
-});
+// 提供给子组件
+provide(loginInfoKey, loginInfo);
+provide(setLoginInfoKey, setLoginInfo);
 </script>
 
 <style scoped>

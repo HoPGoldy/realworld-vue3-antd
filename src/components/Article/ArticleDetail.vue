@@ -1,13 +1,6 @@
 <template>
 <div>
-    <a-result v-if="notFound" status="404" title="404" sub-title="Sorry, the page you visited does not exist.">
-        <template #extra>
-            <router-link to="/home">
-                <a-button type="primary">Back Home</a-button>
-            </router-link>
-        </template>
-    </a-result>
-    <a-space v-else direction="vertical" style="width: 100%">
+    <a-space direction="vertical" style="width: 100%">
         <a-card :bordered="false">
             <a-typography-title>{{article.title}}</a-typography-title>
              <ArticleMeta :article="article" @update="onUpdateArticle" />
@@ -30,21 +23,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { ref, watch } from 'vue';
 import TagList from '@/components/TagList.vue';
 import ArticleMeta from '@/components/Article/ArticleMeta.vue';
 import { fetchArticle } from '@/services/article';
 import { Article, Slug } from '@/types/services';
+import setDocumentTitle from '@/utils/setDocumentTitle';
 
 const props = defineProps<{ slug: Slug }>();
 const article = ref<Article>(await fetchArticle(props.slug));
 
+// 标题变更时修改网页标题
+watch(() => article.value.title, setDocumentTitle, { immediate: true });
+
 const onUpdateArticle = function (newArticle: Article) {
     article.value = newArticle;
 }
-
-// 未找到该文章
-const notFound = computed(() => Object.keys(article.value).length <= 0)
 </script>
 
 <style>

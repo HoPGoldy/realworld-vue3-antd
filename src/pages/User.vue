@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, computed, Ref, watchEffect } from 'vue';
+import { ref, inject, computed, Ref, watchEffect, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { SettingOutlined, BuildOutlined, HeartOutlined } from '@ant-design/icons-vue';
 import { loginInfoKey } from '@/contants';
@@ -53,6 +53,7 @@ import ArticleList from '@/components/Article/ArticleList.vue';
 import FollowButton from '@/components/FollowButton.vue';
 import { UserInfo } from '@/types/services';
 import { fetchUserProfile } from '@/services/profile';
+import setDocumentTitle from '@/utils/setDocumentTitle';
 
 const useUserInfo = function (username: Ref<string>) {
     // 当前页面用户的信息
@@ -82,7 +83,6 @@ const useUserInfo = function (username: Ref<string>) {
     return { userInfo, isSelf, setUserInfo, followed };
 }
 
-
 const useUserArticleList = function (defaultTab: string, username: Ref<string>) {
     const router = useRouter();
     const currentTab = ref(defaultTab);
@@ -104,11 +104,12 @@ const useUserArticleList = function (defaultTab: string, username: Ref<string>) 
 const route = useRoute();
 const username = computed(() => route.params.username as string);
 
+// 用户名变更时修改标题
+watch(username, setDocumentTitle, { immediate: true });
+
 // 当前选中的标签页，会用 query 参数作为默认值
 const defaultTab = typeof route.query.tab === 'string' ? route.query.tab : 'my';
 
 const { userInfo, isSelf, followed, setUserInfo } = useUserInfo(username);
 const { currentTab, query, onClickTag } = useUserArticleList(defaultTab, username);
-
-
 </script>

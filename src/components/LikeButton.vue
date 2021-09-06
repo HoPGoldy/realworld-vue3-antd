@@ -29,7 +29,7 @@ const { loading, run: onClick } = useLoading(async () => {
     const request = article.value.favorited ? unfavoriteArticle : favoriteArticle;
     const resp = await request(article.value.slug);
     emits('update', resp);
-})
+});
 </script>
 
 <style>

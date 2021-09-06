@@ -19,7 +19,7 @@
                 size="small"
                 @update="onUpdateAuthor"
             />
-            <LikeButton :article="article" size="small" />
+            <LikeButton :article="article" size="small" @update="onUpdateArticle" />
         </template>
     </a-space>
 </a-space>
@@ -65,5 +65,8 @@ const useArticleButton = function (article: Ref<Article>) {
 
 const { article } = toRefs(props);
 
-const { showManageButton, deleting, onDeleteArticle, onUpdateAuthor } = useArticleButton(article);
+const {
+    showManageButton, deleting,
+    onDeleteArticle, onUpdateAuthor, onUpdateArticle
+} = useArticleButton(article);
 </script>

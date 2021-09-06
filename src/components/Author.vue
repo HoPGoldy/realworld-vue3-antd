@@ -3,8 +3,8 @@
     <a-avatar :size="size" :src="author.image" />
     
     <a-space :direction="metaDirection" :size="metaSpaceSize">
-        <a-typography-text>{{author.username}}</a-typography-text>
-        <a-typography-text type="secondary">{{dateLabel}}</a-typography-text>
+        <a-typography-text>{{ author.username }}</a-typography-text>
+        <a-typography-text type="secondary">{{ dateLabel }}</a-typography-text>
     </a-space>
 </a-space>
 </template>
