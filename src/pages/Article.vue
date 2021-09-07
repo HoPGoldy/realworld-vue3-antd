@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from 'vue-router';
-import ArticleDetail from '@/components/Article/ArticleDetail.vue';
-import CommentList from '@/components/Comment/ComentList.vue';
-import { Slug } from '@/types/services';
+import { useRoute } from 'vue-router'
+import ArticleDetail from '@/components/Article/ArticleDetail.vue'
+import CommentList from '@/components/Comment/ComentList.vue'
+import { Slug } from '@/types/services'
 
-const route = useRoute();
-const querySlug = route.params.id as Slug;
+const route = useRoute()
+const querySlug = route.params.id as Slug
 </script>
 
 <style>

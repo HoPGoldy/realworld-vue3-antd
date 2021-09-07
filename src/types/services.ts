@@ -83,7 +83,7 @@ export type RegisterInfo = LoginInfo & {
 }
 
 /** 更新用户信息时需要上传的数据 */
-export type UpdateSelfUserInfo = {
+export interface UpdateSelfUserInfo {
     /** 用户名 */
     username: string
     /** 简介 */

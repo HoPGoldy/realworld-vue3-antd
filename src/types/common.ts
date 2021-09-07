@@ -1,6 +1,6 @@
-import { ValidationRule } from "ant-design-vue/lib/form/Form";
+import { ValidationRule } from 'ant-design-vue/lib/form/Form'
 
 /** 表单校验规则 */
-export type FormRules = {
+export interface FormRules {
     [field: string]: ValidationRule[]
 }

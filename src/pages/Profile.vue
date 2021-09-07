@@ -7,7 +7,7 @@
                 <a-typography-title>Your Settings</a-typography-title>
             </template>
 
-            <CrizmasErrorAlert :errorMsg="errorMsg"/>
+            <CrizmasErrorAlert :error-msg="errorMsg" />
 
             <!-- 用户配置表单 -->
             <a-form :label-col="{ span: 5 }" label-align="left">
@@ -29,10 +29,10 @@
             </a-form>
 
             <!-- 按钮区 -->
-            <a-button :loading="submiting" type="primary" @click="onSubmit" block>
+            <a-button :loading="submiting" type="primary" block @click="onSubmit">
                 Update Setting
             </a-button>
-            <a-button style="margin-top: 1em" type="link" @click="onLogout" block>
+            <a-button style="margin-top: 1em" type="link" block @click="onLogout">
                 Or click here to logout
             </a-button>
         </a-card>
@@ -41,20 +41,20 @@
 </template>
 
 <script lang="ts" setup>
-import { setLoginInfoKey, loginInfoKey } from '@/contants';
-import { ref, inject, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { UpdateSelfUserInfo } from '@/types/services';
-import { updateSelfUserInfo } from '@/services/user';
-import CrizmasErrorAlert from "@/components/CrizmasErrorAlert.vue";
-import { useForm } from '@/composable/useForm';
+import { setLoginInfoKey, loginInfoKey } from '@/contants'
+import { ref, inject, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { UpdateSelfUserInfo } from '@/types/services'
+import { updateSelfUserInfo } from '@/services/user'
+import CrizmasErrorAlert from '@/components/CrizmasErrorAlert.vue'
+import { useForm } from '@/composable/useForm'
 
-const loginInfo = inject(loginInfoKey, ref(undefined));
-const router = useRouter();
+const loginInfo = inject(loginInfoKey, ref(undefined))
+const router = useRouter()
 
 const setLoginInfo = inject(setLoginInfoKey, () => {
-    throw new Error('Profile 中找不到 setLoginInfo');
-});
+    throw new Error('Profile 中找不到 setLoginInfo')
+})
 
 const { formData, onSubmit, validateInfos, errorMsg, submiting } = useForm<UpdateSelfUserInfo>(
     {
@@ -70,22 +70,22 @@ const { formData, onSubmit, validateInfos, errorMsg, submiting } = useForm<Updat
         email: [{ required: true, trigger: 'change' }]
     },
     async formData => {
-        const selfUserInfo = await updateSelfUserInfo(formData);
+        const selfUserInfo = await updateSelfUserInfo(formData)
         // 更新用户信息后把新的内容更新到全局
-        setLoginInfo(selfUserInfo);
-        router.replace(`/user/${selfUserInfo.username}`);
+        setLoginInfo(selfUserInfo)
+        router.replace(`/user/${selfUserInfo.username}`)
     }
 )
 
 // 组件初始化的时候用户信息不一定载入好了，这里要 watch 一下
 watch(loginInfo, newData => {
-    if (newData) formData.value = { ...newData, password: '' };
-}, { immediate: true });
+    if (newData) formData.value = { ...newData, password: '' }
+}, { immediate: true })
 
 // 回调 - 点击登出按钮
 const onLogout = () => {
-    localStorage.removeItem('token');
-    setLoginInfo(undefined);
-    router.push('/home');
+    localStorage.removeItem('token')
+    setLoginInfo(undefined)
+    router.push('/home')
 }
 </script>

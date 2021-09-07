@@ -14,5 +14,5 @@
 </template>
 
 <script lang="ts" setup>
-import ArticleEditor from '@/components/Article/ArticleEditor.vue';
+import ArticleEditor from '@/components/Article/ArticleEditor.vue'
 </script>

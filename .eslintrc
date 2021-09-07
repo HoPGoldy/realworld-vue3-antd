@@ -1,0 +1,36 @@
+{
+    "root": true,
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+        "parser": "@typescript-eslint/parser",
+        "project": "./tsconfig.json",
+        "sourceType": "module",
+        "extraFileExtensions": [".vue", ".d.ts"]
+    },
+    "extends": [
+        "standard-with-typescript",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:vue/vue3-recommended"
+    ],
+    "rules": {
+        "vue/html-indent": ["error", 4, { "baseIndent": 0 }],
+        "vue/max-attributes-per-line": ["error", {
+            "singleline": { "max": 4, "allowFirstLine": true },
+            "multiline": { "max": 1, "allowFirstLine": false }
+        }],
+        "@typescript-eslint/indent": ["error", 4],
+        "indent": "off",
+        "@typescript-eslint/brace-style": ["error", "stroustrup"],
+        "brace-style": "off",
+        "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }]
+    },
+    "globals": {
+        "defineProps": true,
+        "withDefaults": true,
+        "defineEmits": true
+    },
+    "overrides": [
+    ]
+}
+  

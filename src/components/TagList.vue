@@ -1,12 +1,19 @@
 <template>
-<a-tag class="tag" v-for="tag in tagList" :key="tag" @click="onClickTag(tag)">{{tag}}</a-tag>
+<a-tag v-for="tag in tagList" :key="tag" class="tag" @click="onClickTag(tag)">
+    {{ tag }}
+</a-tag>
 </template>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{ tagList?: string[] }>(), { tagList: () => [] });
-const emits = defineEmits<{ (event: 'click', data: string): void }>();
 
-const onClickTag = (value: string) => emits('click', value);
+interface Emits {
+    (event: 'click', data: string): void
+}
+
+withDefaults(defineProps<{ tagList?: string[] }>(), { tagList: () => [] })
+const emits = defineEmits<Emits>()
+
+const onClickTag = (value: string) => emits('click', value)
 </script>
 
 <style scoped>

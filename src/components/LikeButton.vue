@@ -1,35 +1,39 @@
 <template>
 <a-button :loading="loading" :type="article.favorited ? 'primary' : 'default'" :size="size" @click="onClick">
     <template #icon>
-      <LikeOutlined />
+        <LikeOutlined />
     </template>
     {{ article.favoritesCount }}
 </a-button>
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
-import { LikeOutlined } from "@ant-design/icons-vue";
-import { Article } from "@/types/services";
-import { favoriteArticle, unfavoriteArticle } from "@/services/article";
-import useLoading from "@/utils/useLoding";
+import { toRefs } from 'vue'
+import { LikeOutlined } from '@ant-design/icons-vue'
+import { Article } from '@/types/services'
+import { favoriteArticle, unfavoriteArticle } from '@/services/article'
+import useLoading from '@/utils/useLoding'
 
 interface Props {
     article: Article
     size?: string
 }
 
-const props = withDefaults(defineProps<Props>(), { size: 'small' });
-const emits = defineEmits<{ (event: 'update', data: Article): void }>();
+interface Emits {
+    (event: 'update', data: Article): void
+}
 
-const { article, size } = toRefs(props);
+const props = withDefaults(defineProps<Props>(), { size: 'small' })
+const emits = defineEmits<Emits>()
+
+const { article, size } = toRefs(props)
 
 /** 回调 - 点击喜欢按钮 */
 const { loading, run: onClick } = useLoading(async () => {
-    const request = article.value.favorited ? unfavoriteArticle : favoriteArticle;
-    const resp = await request(article.value.slug);
-    emits('update', resp);
-});
+    const request = article.value.favorited ? unfavoriteArticle : favoriteArticle
+    const resp = await request(article.value.slug)
+    emits('update', resp)
+})
 </script>
 
 <style>
