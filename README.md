@@ -1,32 +1,22 @@
-# Vue 3 + Typescript + Vite
+# realworld-vue3-antd
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+realworld 项目，基于 vue3 / typescript / antd 开发，在线预览地址：[realworld-vue3-antd](https://hopgoldy.github.io/realworld-vue3-antd/)。
 
-## Recommended IDE Setup
+## 启动
 
-[VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
+使用: `node 12.16.1+`, `yarn`
 
-### If Using `<script setup>`
+```bash
+# 安装依赖
+yarn
 
-[`<script setup>`](https://github.com/vuejs/rfcs/pull/227) is a feature that is currently in RFC stage. To get proper IDE support for the syntax, use [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) instead of Vetur (and disable Vetur).
+# 启动本地开发服务
+yarn dev
 
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can use the following:
-
-### If Using Volar
-
-Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
-
-### If Using Vetur
-
-1. Install and add `@vuedx/typescript-plugin-vue` to the [plugins section](https://www.typescriptlang.org/tsconfig#plugins) in `tsconfig.json`
-2. Delete `src/shims-vue.d.ts` as it is no longer needed to provide module info to Typescript
-3. Open `src/main.ts` in VSCode
-4. Open the VSCode command palette
-5. Search and run "Select TypeScript version" -> "Use workspace version"
-
-# Reference
+# 打包
+yarn build
+```
+## 参考
 
 - [realworld offical](https://demo.realworld.io/#/)
 - [vue3](https://vue3js.cn/docs/zh/guide/introduction.html)
