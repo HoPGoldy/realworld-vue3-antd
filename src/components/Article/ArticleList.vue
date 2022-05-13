@@ -110,11 +110,14 @@ watchEffect(async () => {
     articles.value = []
     listLoading.value = true
 
-    const data = await props.request({
+    const queryData = {
         offset: (pagination.current - 1) * NUMBER_PER_PAGE,
         limit: NUMBER_PER_PAGE,
         ...query.value
-    })
+    }
+    if (queryData.tag === '') delete queryData.tag
+
+    const data = await props.request(queryData)
     listLoading.value = false
 
     // 更新文章列表和总数到本地

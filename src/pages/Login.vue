@@ -43,13 +43,13 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef, computed, inject } from 'vue'
+import { toRef, computed, inject, ref, watch } from 'vue'
 import { setLoginInfoKey } from '@/contants'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { login, register } from '@/services/user'
 import CrizmasErrorAlert from '@/components/CrizmasErrorAlert.vue'
 import { RegisterInfo } from '@/types/services'
-import { useForm } from '@/composable/useForm'
+import { FormRules, useForm } from '@/composable/useForm'
 
 const path = toRef(useRoute(), 'path')
 const isLoginPage = computed(() => path.value === '/login')
@@ -57,20 +57,39 @@ const router = useRouter()
 
 // 设置全局用户信息
 const setLoginInfo = inject(setLoginInfoKey, () => {
-    throw new Error('Login 中只要不的 setLoginInfo')
+    throw new Error('Login 中找不到 setLoginInfo')
 })
 
-const { formData, onSubmit, validateInfos, errorMsg, submiting, resetFields } = useForm<RegisterInfo>(
-    {
-        username: '',
-        password: '',
-        email: ''
-    },
-    {
-        username: [{ required: true, trigger: 'change' }],
+const formData = ref({
+    username: '',
+    password: '',
+    email: ''
+})
+
+// 从登录页切换到注册页时（自己跳自己），清空表单验证
+watch(isLoginPage, () => {
+    resetFields()
+    formRules.value = getRules()
+})
+
+const getRules = () => {
+    const rules: FormRules = {
         password: [{ required: true, trigger: 'change' }],
         email: [{ required: true, trigger: 'change' }]
-    },
+    }
+
+    if (!isLoginPage.value) {
+        rules.username = [{ required: true, trigger: 'change' }]
+    }
+
+    return rules
+}
+
+const formRules = ref<FormRules>(getRules())
+
+const { onSubmit, validateInfos, errorMsg, submiting, resetFields } = useForm<RegisterInfo>(
+    formData,
+    formRules,
     async formData => {
         // 根据当前页面状态决定调用登录接口还是注册接口
         const request = isLoginPage.value ? login : register
@@ -80,6 +99,4 @@ const { formData, onSubmit, validateInfos, errorMsg, submiting, resetFields } = 
     }
 )
 
-// 从登录页切换到注册页时（自己跳自己），清空表单验证
-onBeforeRouteLeave(() => resetFields())
 </script>

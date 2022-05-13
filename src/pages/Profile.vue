@@ -56,19 +56,21 @@ const setLoginInfo = inject(setLoginInfoKey, () => {
     throw new Error('Profile 中找不到 setLoginInfo')
 })
 
-const { formData, onSubmit, validateInfos, errorMsg, submiting } = useForm<UpdateSelfUserInfo>(
-    {
-        username: '',
-        password: '',
-        email: '',
-        bio: '',
-        image: ''
-    },
-    {
+const formData = ref<UpdateSelfUserInfo>({
+    username: '',
+    password: '',
+    email: '',
+    bio: '',
+    image: ''
+})
+
+const { onSubmit, validateInfos, errorMsg, submiting } = useForm<UpdateSelfUserInfo>(
+    formData,
+    ref({
         username: [{ required: true, trigger: 'change' }],
         password: [{ required: true, trigger: 'change' }],
         email: [{ required: true, trigger: 'change' }]
-    },
+    }),
     async formData => {
         const selfUserInfo = await updateSelfUserInfo(formData)
         // 更新用户信息后把新的内容更新到全局

@@ -1,16 +1,17 @@
-import { ref, reactive, UnwrapRef, Ref } from 'vue'
-import { FormRules } from '@/types/common'
+import { ref, Ref } from 'vue'
 import { CrizmasError } from '@/types/services'
 import { Form } from 'ant-design-vue'
 import useLoading from '@/utils/useLoding'
 import { validateInfos } from 'ant-design-vue/lib/form/useForm'
+import { ValidationRule } from 'ant-design-vue/lib/form/Form'
 import axios from 'axios'
 
-interface UseFormReturn<T> {
-    /**
-     * 表单内容的 ref
-     */
-    formData: Ref<UnwrapRef<T>>
+type MyValidationRule = Omit<ValidationRule, 'message'> & { message?: string }
+
+/** 表单校验规则 */
+export type FormRules = Record<string, MyValidationRule[]>
+
+interface UseFormReturn {
     /**
      * 表单提交异步函数
      */
@@ -45,22 +46,20 @@ interface UseFormReturn<T> {
  * @param submit 表单提交异步函数，接受通过规则的表单内容
  */
 export const useForm = function <T>(
-    defaultModal: T,
-    defaultRules: FormRules,
-    submit: (formData: UnwrapRef<T>) => void
-): UseFormReturn<T> {
-    const formRules = reactive(defaultRules)
-    const formData = ref(defaultModal)
+    formModal: Ref<T>,
+    formRules: Ref<FormRules>,
+    submit: (formData: T) => void
+): UseFormReturn {
     const errorMsg = ref<CrizmasError>()
 
-    const { validate, validateInfos, clearValidate, resetFields } = Form.useForm(formData, formRules)
+    const { validate, validateInfos, clearValidate, resetFields } = Form.useForm(formModal, formRules)
 
     // 回调 - 点击发布按钮
     const { loading: submiting, run: onSubmit } = useLoading(async () => {
         try {
             errorMsg.value = undefined
             await validate()
-            await submit(formData.value)
+            await submit(formModal.value)
         }
         catch (e) {
             console.error(e)
@@ -71,5 +70,5 @@ export const useForm = function <T>(
         }
     })
 
-    return { formData, onSubmit, submiting, validateInfos, errorMsg, clearValidate, resetFields }
+    return { onSubmit, submiting, validateInfos, errorMsg, clearValidate, resetFields }
 }

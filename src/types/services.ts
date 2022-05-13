@@ -79,7 +79,7 @@ export interface LoginInfo {
 /** 注册信息 */
 export type RegisterInfo = LoginInfo & {
     /** 用户名 */
-    username: string
+    username?: string
 }
 
 /** 更新用户信息时需要上传的数据 */

@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArticleContent, Slug } from '@/types/services'
 import { createArticle, fetchArticle, updateArticle } from '@/services/article'
@@ -56,19 +56,23 @@ const useArticleInfo = function () {
 const router = useRouter()
 const { editSlug, isCreatePage } = useArticleInfo()
 
+const formData = ref<ArticleContent>({
+    title: '',
+    description: '',
+    body: '',
+    tagList: []
+})
+
+const formRules = ref({
+    title: [{ required: true, trigger: 'change' }],
+    body: [{ required: true, trigger: 'change' }],
+    description: [{ required: true, trigger: 'change' }]
+})
+
 // 生成表单相关响应式
-const { formData, onSubmit, validateInfos, errorMsg, submiting } = useForm<ArticleContent>(
-    {
-        title: '',
-        description: '',
-        body: '',
-        tagList: []
-    },
-    {
-        title: [{ required: true, trigger: 'change' }],
-        body: [{ required: true, trigger: 'change' }],
-        description: [{ required: true, trigger: 'change' }]
-    },
+const { onSubmit, validateInfos, errorMsg, submiting } = useForm<ArticleContent>(
+    formData,
+    formRules,
     async formData => {
         // 根据页面状态选择是更新还是新建
         const newArticle = isCreatePage.value
