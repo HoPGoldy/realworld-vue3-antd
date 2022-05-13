@@ -1,10 +1,10 @@
 <template>
 <div>
-    <a-card :bordered="false">
+    <a-card class="comment-input" :bordered="false">
         <a-textarea
             v-model:value="commentContent"
             placeholder="Write a comment..."
-            :auto-size="{ minRows: 2 }"
+            :auto-size="{ minRows: 4 }"
         />
     </a-card>
 
@@ -53,6 +53,9 @@ const { loading: submiting, run: onSubmit } = useLoading(async () => {
 </script>
 
 <style>
+.comment-input .ant-card-body {
+    padding: 12px !important;
+}
 .comment-meta .ant-card-body {
     padding: 12px 16px 12px 16px !important;
 }

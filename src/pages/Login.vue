@@ -19,7 +19,7 @@
         <a-col :lg="6" :md="12" :xs="24" style="margin-top: 1em;">
             <CrizmasErrorAlert :error-msg="errorMsg" />
 
-            <a-form ref="formRef">
+            <a-form>
                 <a-form-item v-if="!isLoginPage" v-bind="validateInfos.username">
                     <a-input v-model:value="formData.username" placeholder="username" />
                 </a-form-item>
