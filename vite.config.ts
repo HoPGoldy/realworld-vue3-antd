@@ -6,7 +6,7 @@ import styleImport from 'vite-plugin-style-import'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/realworld-vue3-antd/',
+    base: './',
     resolve: {
         alias: {
             '@': resolve(__dirname, './src')
